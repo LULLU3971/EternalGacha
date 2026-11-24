@@ -1,0 +1,1065 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10151b">
+  <meta name="description" content="이터널 리턴 실험체 3인 팀 토너먼트 룰렛">
+  <title>루미아 생존 토너먼트</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap');
+    :root {
+      color-scheme: dark;
+      --bg: #10151b;
+      --surface: #171e26;
+      --surface-2: #1d2731;
+      --surface-3: #222e39;
+      --line: rgba(224,237,244,.11);
+      --line-2: rgba(224,237,244,.2);
+      --text: #f1f4f5;
+      --muted: #a2afb6;
+      --dim: #75848d;
+      --lime: #d6fa78;
+      --mint: #a3e5ce;
+      --orange: #ffb56e;
+      --red: #ff7774;
+      --blue: #8bcaff;
+      --violet: #ccacff;
+      --mono: 'DM Mono', ui-monospace, monospace;
+      --sans: 'Manrope', 'Noto Sans KR', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; min-width: 320px; color: var(--text); font-family: var(--sans); letter-spacing: -.025em;
+      background: radial-gradient(ellipse at 0 0, rgba(79,117,112,.14), transparent 30%), radial-gradient(ellipse at 100% 55%, rgba(174,112,70,.08), transparent 26%), var(--bg);
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible, input:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+    .shell { width: min(1280px, calc(100% - 56px)); margin: 0 auto; }
+    .mono { font-family: var(--mono); }
+    .eyebrow { color: var(--mint); font: 500 9px var(--mono); letter-spacing: .17em; text-transform: uppercase; }
+    .topbar { height: 72px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .brand { display: flex; align-items: center; gap: 11px; }
+    .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid rgba(163,229,206,.55); border-radius: 10px 10px 10px 3px; background: rgba(163,229,206,.08); color: var(--mint); transform: rotate(-5deg); }
+    .brand-mark svg { width: 19px; height: 19px; transform: rotate(5deg); }
+    .brand-label { color: #dce6e8; font: 500 10px var(--mono); letter-spacing: .1em; }
+    .brand-label small { display: block; margin-top: 4px; color: var(--dim); font-size: 8px; letter-spacing: .16em; }
+    .nav { display: flex; align-items: center; gap: 6px; }
+    .nav-button { padding: 9px 13px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--muted); font-size: 11px; cursor: pointer; transition: .2s; }
+    .nav-button:hover { color: var(--text); background: rgba(255,255,255,.035); }
+    .nav-button.active { color: var(--lime); border-color: rgba(214,250,120,.2); background: rgba(214,250,120,.06); }
+    .beta-tag { margin-left: 11px; padding: 7px 9px; border: 1px solid var(--line); border-radius: 999px; color: #b3c0c3; font: 8px var(--mono); letter-spacing: .07em; }
+    main { padding: 29px 0 48px; }
+    .page { display: none; animation: page-in .35s ease both; }
+    .page.active { display: block; }
+    @keyframes page-in { from { opacity: .35; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+    .home-hero { min-height: 335px; display: grid; grid-template-columns: 1.1fr .9fr; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(125deg, #1a2730, #182129 53%, #21251f); box-shadow: 0 18px 60px rgba(0,0,0,.18); }
+    .hero-copy { position: relative; z-index: 1; padding: 37px 38px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
+    .hero-copy:after { content: ''; position: absolute; z-index: -1; width: 350px; height: 350px; left: -170px; bottom: -250px; border: 1px solid rgba(163,229,206,.1); border-radius: 50%; box-shadow: 0 0 0 35px rgba(163,229,206,.025), 0 0 0 70px rgba(163,229,206,.02); }
+    .hero-kicker { display: flex; align-items: center; gap: 9px; }
+    .hero-kicker i { width: 22px; height: 1px; background: var(--mint); }
+    h1 { margin: 16px 0 0; font-size: clamp(34px,4.2vw,54px); line-height: 1.13; font-weight: 800; letter-spacing: -.075em; }
+    h1 span { color: var(--lime); }
+    .hero-copy p { max-width: 470px; margin: 15px 0 0; color: #a9b7bb; font-size: 12px; line-height: 1.8; word-break: keep-all; }
+    .focus-picker { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin-top: 17px; }
+    .focus-picker label { color: #d8e6df; font-size: 9px; font-weight: 700; }
+    .focus-picker select { min-width: 155px; min-height: 32px; padding: 0 28px 0 9px; border: 1px solid rgba(214,250,120,.32); border-radius: 6px; background: #15211f; color: var(--lime); font-size: 9px; cursor: pointer; }
+    .focus-picker-hint { color: #91a1a5; font-size: 8px; }
+    .hero-actions { display: flex; align-items: center; gap: 13px; margin-top: 25px; flex-wrap: wrap; }
+    .primary-button { min-height: 43px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; padding: 0 17px; border: 1px solid #d5f395; border-radius: 7px; background: linear-gradient(110deg,#d6fa78,#b8e885); color: #15201a; font-size: 11px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 20px rgba(214,250,120,.12); transition: transform .2s,filter .2s; }
+    .primary-button:hover { transform: translateY(-2px); filter: brightness(1.05); }
+    .primary-button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .primary-button .arrow { font-size: 16px; font-weight: 500; }
+    .hero-hint { color: #91a1a5; font-size: 9px; }
+    .hero-art { position: relative; min-height: 335px; overflow: hidden; display: flex; justify-content: center; align-items: end; background: radial-gradient(ellipse at 54% 45%, rgba(138,196,157,.28), transparent 39%), linear-gradient(140deg,rgba(16,26,31,.12),rgba(17,22,28,.55)); }
+    .hero-art:before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(203,234,214,.045) 1px, transparent 1px),linear-gradient(90deg,rgba(203,234,214,.045) 1px,transparent 1px); background-size: 26px 26px; mask-image: linear-gradient(90deg,transparent,black); }
+    .hero-art:after { content: ''; position: absolute; left: 12%; right: 12%; bottom: -95px; height: 190px; border: 1px solid rgba(163,229,206,.22); border-radius: 50%; box-shadow: 0 0 0 20px rgba(163,229,206,.035), 0 0 0 48px rgba(163,229,206,.03); }
+    .hero-character-frame { position: relative; z-index: 1; width: min(80%,305px); height: 255px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid rgba(205,236,219,.15); border-bottom: 0; border-radius: 50% 50% 7px 7px / 25% 25% 7px 7px; background: linear-gradient(155deg,rgba(94,142,128,.25),rgba(21,36,42,.75)); box-shadow: 0 0 70px rgba(157,218,171,.12); }
+    .hero-character-frame.is-focused { border-color: rgba(239,255,165,.9); box-shadow: 0 0 0 2px rgba(214,250,120,.2),0 0 28px rgba(214,250,120,.42),0 0 76px rgba(214,250,120,.24); animation: focus-glow 1.8s ease-in-out infinite alternate; }
+    @keyframes focus-glow { to { box-shadow: 0 0 0 3px rgba(214,250,120,.24),0 0 40px rgba(214,250,120,.58),0 0 92px rgba(214,250,120,.3); } }
+    .hero-character-frame .portrait { width: 100%; height: 100%; border-radius: inherit; }
+    .hero-character-frame img { object-fit: cover; object-position: center 20%; image-rendering: auto; }
+    .hero-id { position: absolute; z-index: 2; top: 17px; left: 18px; color: #d6e5db; font: 8px var(--mono); letter-spacing: .13em; }
+    .hero-id b { display: block; margin-top: 5px; color: var(--lime); font-size: 10px; font-weight: 500; }
+    .hero-caption { position: absolute; z-index: 2; right: 19px; bottom: 19px; padding: 8px 10px; border: 1px solid rgba(217,245,222,.18); border-radius: 6px; background: rgba(11,18,22,.55); color: #d8e6dd; font: 9px var(--mono); backdrop-filter: blur(8px); }
+    .home-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 13px; }
+    .stat-card { min-height: 78px; display: flex; align-items: center; gap: 13px; padding: 14px 17px; border: 1px solid var(--line); border-radius: 10px; background: rgba(23,30,38,.8); }
+    .stat-icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; background: rgba(163,229,206,.09); color: var(--mint); font-size: 15px; }
+    .stat-card:nth-child(2) .stat-icon { color: var(--lime); background: rgba(214,250,120,.08); }
+    .stat-card:nth-child(3) .stat-icon { color: var(--orange); background: rgba(255,181,110,.08); }
+    .stat-copy small { display: block; color: var(--dim); font: 8px var(--mono); letter-spacing: .08em; }
+    .stat-copy strong { display: block; margin-top: 5px; color: #eff4f2; font: 600 17px var(--mono); }
+    .stat-copy strong span { margin-left: 4px; color: #88999f; font-size: 9px; font-weight: 400; }
+    .home-bottom { display: grid; grid-template-columns: 1.15fr .85fr; gap: 13px; margin-top: 13px; }
+    .info-card { min-height: 150px; padding: 18px; border: 1px solid var(--line); border-radius: 10px; background: rgba(23,30,38,.74); }
+    .info-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .info-head h2 { margin: 0; font-size: 12px; }
+    .info-head span { color: var(--dim); font: 8px var(--mono); }
+    .flow { display: grid; grid-template-columns: repeat(4,1fr); gap: 9px; margin-top: 19px; }
+    .flow-step { position: relative; min-height: 64px; padding: 10px; border: 1px solid rgba(224,237,244,.08); border-radius: 7px; background: rgba(255,255,255,.018); }
+    .flow-step:not(:last-child):after { content: '›'; position: absolute; top: 20px; right: -8px; z-index: 1; color: #80918f; font-size: 15px; }
+    .flow-step small { color: var(--mint); font: 8px var(--mono); }
+    .flow-step b { display: block; margin-top: 8px; color: #d5dedf; font-size: 9px; }
+    .rules-list { display: grid; gap: 10px; margin-top: 16px; }
+    .rule { display: flex; align-items: start; gap: 9px; color: #aab8bb; font-size: 9px; line-height: 1.6; }
+    .rule-mark { width: 17px; height: 17px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 5px; color: var(--lime); background: rgba(214,250,120,.08); font: 8px var(--mono); }
+    .page-heading { display: flex; align-items: end; justify-content: space-between; gap: 15px; margin: 2px 0 18px; }
+    .page-heading h2 { margin: 6px 0 0; font-size: 23px; letter-spacing: -.06em; }
+    .page-heading p { margin: 0; color: var(--muted); font-size: 10px; }
+    .panel { border: 1px solid var(--line); border-radius: 11px; background: rgba(23,30,38,.9); }
+    .roster-panel { overflow: hidden; }
+    .roster-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 15px; border-bottom: 1px solid var(--line); }
+    .roster-counts { color: #9caeb4; font: 9px var(--mono); white-space: nowrap; }
+    .roster-counts b { color: var(--lime); font-weight: 500; }
+    .toolbar-actions { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .search { width: min(235px, 37vw); height: 34px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; background: #11171d; color: var(--text); font-size: 10px; }
+    .search::placeholder { color: #6f8188; }
+    .soft-button { min-height: 31px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; background: rgba(255,255,255,.02); color: #aab9bd; font-size: 9px; cursor: pointer; transition: .2s; }
+    .soft-button:hover { border-color: var(--line-2); color: var(--text); }
+    .soft-button.danger { color: #f09a96; }
+    .character-grid { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 9px; padding: 14px; }
+    .character-card { position: relative; min-width: 0; overflow: hidden; border: 1px solid rgba(224,237,244,.1); border-radius: 8px; background: #131b23; transition: transform .2s,border .2s,opacity .2s; }
+    .character-card:hover { transform: translateY(-2px); border-color: rgba(163,229,206,.36); }
+    .character-card.excluded { opacity: .55; filter: grayscale(.82); }
+    .portrait { position: relative; width: 100%; display: block; overflow: hidden; aspect-ratio: 1 / 1; background: radial-gradient(circle at 40% 26%,rgba(185,225,193,.27),transparent 30%), linear-gradient(145deg,#38544d,#1e2c34 70%); }
+    .portrait:after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg,transparent 62%,rgba(9,14,18,.25)); }
+    .portrait img { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 21%; }
+    .portrait.is-focused { outline: 2px solid var(--lime); outline-offset: -2px; box-shadow: 0 0 16px rgba(214,250,120,.4); }
+    .portrait.is-focused:before { content: 'FOCUS'; position: absolute; z-index: 3; right: 4px; top: 4px; padding: 3px 4px; border-radius: 3px; background: rgba(13,21,17,.84); color: var(--lime); font: 6px var(--mono); letter-spacing: .08em; }
+    .portrait-fallback { position: absolute; inset: 0; display: grid; place-items: center; color: #d6e5db; font-size: 31px; font-weight: 800; text-shadow: 0 3px 12px rgba(0,0,0,.35); }
+    .character-card:nth-child(4n+2) .portrait { background: radial-gradient(circle at 40% 26%,rgba(245,192,147,.31),transparent 30%),linear-gradient(145deg,#63513c,#282d34 70%); }
+    .character-card:nth-child(4n+3) .portrait { background: radial-gradient(circle at 40% 26%,rgba(160,190,250,.3),transparent 30%),linear-gradient(145deg,#43527c,#222b39 70%); }
+    .character-card:nth-child(4n) .portrait { background: radial-gradient(circle at 40% 26%,rgba(214,158,255,.27),transparent 30%),linear-gradient(145deg,#59436d,#222b39 70%); }
+    .card-index { position: absolute; left: 7px; top: 7px; z-index: 2; padding: 4px 5px; border: 1px solid rgba(255,255,255,.18); border-radius: 4px; background: rgba(8,13,16,.5); color: #dce6e3; font: 7px var(--mono); backdrop-filter: blur(5px); }
+    .card-body { padding: 8px 8px 7px; }
+    .char-name { min-height: 15px; overflow: hidden; color: #e8eeee; font-size: 9px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .char-roman { overflow: hidden; margin-top: 3px; color: #6f8188; font: 7px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
+    .toggle-button { width: 100%; min-height: 25px; margin-top: 8px; border: 1px solid rgba(163,229,206,.21); border-radius: 5px; background: rgba(163,229,206,.055); color: var(--mint); font-size: 8px; cursor: pointer; transition: .2s; }
+    .toggle-button:hover { background: rgba(163,229,206,.12); }
+    .excluded .toggle-button { border-color: rgba(255,119,116,.24); background: rgba(255,119,116,.06); color: #ffa19c; }
+    .character-card.focused { border-color: rgba(214,250,120,.72); box-shadow: 0 0 19px rgba(214,250,120,.13); }
+    .card-actions { display: grid; grid-template-columns: 1fr auto; gap: 5px; align-items: center; }
+    .card-actions .toggle-button { min-width: 0; padding-inline: 3px; }
+    .focus-toggle { min-height: 25px; margin-top: 8px; padding: 0 7px; border: 1px solid rgba(224,237,244,.14); border-radius: 5px; background: rgba(255,255,255,.025); color: #9baab0; font-size: 8px; cursor: pointer; }
+    .focus-toggle[aria-pressed="true"] { border-color: rgba(214,250,120,.48); background: rgba(214,250,120,.1); color: var(--lime); }
+    .card-stamp { position: absolute; right: 7px; top: 7px; z-index: 2; display: none; padding: 4px 5px; transform: rotate(8deg); border: 1px solid rgba(255,119,116,.65); border-radius: 3px; color: #ff928f; background: rgba(39,15,18,.68); font: 7px var(--mono); }
+    .excluded .card-stamp { display: block; }
+    .empty-grid { grid-column: 1/-1; padding: 50px 15px; color: var(--muted); text-align: center; font-size: 11px; }
+    .history-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+    .history-card { padding: 15px; border: 1px solid var(--line); border-radius: 10px; background: rgba(23,30,38,.86); }
+    .history-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+    .history-head b { color: var(--mint); font: 500 9px var(--mono); }
+    .history-head time { color: var(--dim); font: 8px var(--mono); }
+    .winner-row { display: flex; align-items: center; gap: 12px; padding-top: 12px; }
+    .winner-avatar { width: 62px; flex: 0 0 auto; overflow: hidden; border: 1px solid rgba(214,250,120,.48); border-radius: 8px; box-shadow: 0 0 18px rgba(214,250,120,.08); }
+    .winner-avatar .portrait { aspect-ratio: 4/5; }
+    .winner-copy { min-width: 0; }
+    .winner-copy small { color: var(--orange); font: 8px var(--mono); letter-spacing: .08em; }
+    .winner-copy strong { display: block; overflow: hidden; margin-top: 5px; color: #f2f6ef; font-size: 18px; text-overflow: ellipsis; white-space: nowrap; }
+    .winner-copy span { display: block; margin-top: 4px; color: var(--muted); font-size: 9px; }
+    .team-line { display: flex; align-items: center; gap: 7px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(224,237,244,.07); }
+    .mini-portrait { width: 28px; flex: 0 0 auto; overflow: hidden; border: 1px solid var(--line); border-radius: 5px; }
+    .mini-portrait .portrait { aspect-ratio: 1; }
+    .team-members { min-width: 0; overflow: hidden; color: #aab7bb; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+    .history-stats { margin-left: auto; color: #829298; font: 8px var(--mono); white-space: nowrap; }
+    .history-empty { grid-column: 1/-1; min-height: 270px; display: grid; place-items: center; border: 1px dashed var(--line-2); border-radius: 10px; color: #829197; text-align: center; font-size: 10px; line-height: 1.9; }
+    .history-empty i { display: block; margin-bottom: 10px; color: #a3b4b6; font-size: 25px; font-style: normal; }
+    .history-actions { display: flex; align-items: center; gap: 8px; }
+    .overlay { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(5,9,12,.82); backdrop-filter: blur(12px); }
+    .overlay.open { display: flex; animation: overlay-in .2s ease both; }
+    @keyframes overlay-in { from { opacity: 0; } to { opacity: 1; } }
+    .sim-window { width: min(1020px,100%); max-height: min(92vh,900px); display: flex; flex-direction: column; overflow: hidden; border: 1px solid rgba(196,227,215,.2); border-radius: 14px; background: linear-gradient(150deg,#18222b,#111920); box-shadow: 0 35px 100px rgba(0,0,0,.55); }
+    .sim-header { min-height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; border-bottom: 1px solid var(--line); }
+    .sim-brand { display: flex; align-items: center; gap: 9px; color: #e5eeeb; font: 500 9px var(--mono); letter-spacing: .1em; }
+    .sim-brand i { width: 7px; height: 7px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 12px var(--lime); }
+    .sim-close { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: #c5d0d2; font-size: 17px; cursor: pointer; }
+    .sim-close:disabled { opacity: .35; cursor: wait; }
+    .sim-scroll { overflow: auto; padding: 19px; scrollbar-color: #394952 transparent; scrollbar-width: thin; }
+    .phase-top { display: flex; align-items: end; justify-content: space-between; gap: 15px; margin-bottom: 15px; }
+    .phase-name { color: var(--mint); font: 500 8px var(--mono); letter-spacing: .14em; }
+    .phase-top h2 { margin: 5px 0 0; font-size: 20px; letter-spacing: -.05em; }
+    .phase-count { color: #98a9ae; font: 9px var(--mono); text-align: right; }
+    .phase-count b { color: var(--lime); font-size: 14px; font-weight: 500; }
+    .assembly-panel, .arena-panel, .champion-panel { border: 1px solid var(--line); border-radius: 10px; background: rgba(7,12,16,.25); }
+    .assembly-panel { padding: 14px; }
+    .roulette-reel { min-height: 96px; display: flex; align-items: center; justify-content: center; gap: 10px; overflow: hidden; border: 1px solid rgba(163,229,206,.14); border-radius: 8px; background: radial-gradient(ellipse,rgba(115,169,145,.15),transparent 60%); }
+    .reel-person { width: 66px; overflow: hidden; border: 1px solid rgba(163,229,206,.35); border-radius: 8px; background: #17232a; animation: reel-pulse .4s ease-in-out infinite alternate; }
+    .reel-initial { width: 46px; height: 46px; display: grid; place-items: center; margin: 6px auto 2px; border-radius: 6px; background: linear-gradient(145deg,#48665d,#24353a); color: #e2f4e7; font-size: 19px; font-weight: 800; }
+    .reel-name { display: block; overflow: hidden; padding: 3px 4px 6px; color: #d4e2dc; font-size: 8px; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+    .reel-person:nth-child(2) { animation-delay: .12s; }
+    .reel-person:nth-child(3) { animation-delay: .24s; }
+    .reel-person .portrait { aspect-ratio: 1; }
+    @keyframes reel-pulse { to { transform: translateY(-4px); border-color: rgba(214,250,120,.7); } }
+    .assembly-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 13px 0 9px; color: #96a8ac; font: 8px var(--mono); }
+    .assembly-meta b { color: var(--lime); font-weight: 500; }
+    .team-grid { max-height: 234px; display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 6px; overflow: auto; padding: 2px 2px 8px; scrollbar-color: #394952 transparent; scrollbar-width: thin; }
+    .assembly-team { padding: 6px; border: 1px solid rgba(224,237,244,.09); border-radius: 6px; background: rgba(255,255,255,.02); animation: team-in .32s ease both; animation-delay: var(--delay); }
+    @keyframes team-in { from { opacity: 0; transform: scale(.92) translateY(3px); } to { opacity: 1; transform: none; } }
+    .assembly-team-label { margin-bottom: 5px; color: #79918d; font: 7px var(--mono); }
+    .assembly-members { display: flex; gap: 4px; }
+    .assembly-members .mini-portrait { width: calc((100% - 8px)/3); border-radius: 4px; }
+    .assembly-members .portrait { aspect-ratio: 1; }
+    .ejected-strip { display: flex; align-items: center; gap: 8px; min-height: 42px; margin-top: 10px; padding: 7px 9px; border: 1px dashed rgba(255,119,116,.27); border-radius: 6px; background: rgba(255,119,116,.04); }
+    .ejected-title { flex: 0 0 auto; color: #ff9691; font: 8px var(--mono); }
+    .ejected-people { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+    .ejected-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 6px 3px 3px; border: 1px solid rgba(255,119,116,.15); border-radius: 999px; color: #bd9998; font-size: 8px; text-decoration: line-through; }
+    .ejected-chip .mini-portrait { width: 20px; border-color: rgba(255,119,116,.25); border-radius: 50%; filter: grayscale(1); }
+    .ejected-chip .portrait { aspect-ratio: 1; }
+    .arena-panel { padding: 14px; }
+    .arena-topline { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .arena-topline strong { color: #d3dfdc; font: 500 9px var(--mono); }
+    .arena-topline span { color: var(--dim); font: 8px var(--mono); }
+    .arena-viewport { position: relative; overflow: hidden; min-height: 120px; padding: 8px; border: 1px solid rgba(224,237,244,.1); border-radius: 8px; background: radial-gradient(ellipse at 50%,rgba(128,162,134,.1),transparent 60%),linear-gradient(120deg,rgba(27,37,43,.88),rgba(20,26,32,.94)); }
+    .bracket-board { display: grid; align-items: stretch; gap: 7px; transform-origin: 50% 50%; animation: board-zoom .45s cubic-bezier(.2,.7,.2,1) both; }
+    .bracket-board[data-scale="wide"] { grid-template-columns: repeat(5,minmax(0,1fr)); }
+    .bracket-board[data-scale="mid"] { grid-template-columns: repeat(4,minmax(0,1fr)); }
+    .bracket-board[data-scale="close"] { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; padding: 4px 7%; }
+    .bracket-board[data-scale="final"] { grid-template-columns: minmax(0,560px); justify-content: center; gap: 14px; padding: 10px 12%; }
+    @keyframes board-zoom { from { opacity: .45; transform: scale(.86); filter: blur(2px); } to { opacity: 1; transform: scale(1); filter: none; } }
+    .match-cell { position: relative; min-width: 0; min-height: 108px; overflow: hidden; padding: 7px; border: 1px solid rgba(224,237,244,.11); border-radius: 7px; background: rgba(10,16,21,.7); transition: border .25s,background .25s,transform .55s cubic-bezier(.18,.75,.2,1),filter .3s,opacity .3s; }
+    .bracket-board[data-scale="wide"] .match-cell { min-height: 105px; padding: 5px; }
+    .bracket-board[data-scale="close"] .match-cell { min-height: 143px; padding: 10px; }
+    .bracket-board[data-scale="final"] .match-cell { min-height: 180px; padding: 14px; }
+    .match-cell.resolved { z-index: 1; overflow: visible; border-color: rgba(163,229,206,.28); background: rgba(20,34,34,.74); }
+    .bracket-board.is-focusing .match-cell:not(.focus-battle) { opacity: .24; filter: brightness(.55) saturate(.55); }
+    .match-cell.focus-battle { z-index: 20; overflow: visible; border-color: rgba(214,250,120,.76); background: #151f22; box-shadow: 0 0 0 2px rgba(214,250,120,.18),0 0 44px rgba(214,250,120,.35); transform-origin: center; }
+    .match-teams { display: grid; grid-template-columns: minmax(0,1fr) 16px minmax(0,1fr); align-items: center; gap: 2px; }
+    .board-team { min-width: 0; text-align: center; transition: opacity .25s,filter .25s,transform .25s; }
+    .board-team-label { overflow: hidden; color: #81958f; font: 7px var(--mono); white-space: nowrap; text-overflow: ellipsis; }
+    .board-thumbs { display: flex; justify-content: center; gap: 2px; margin-top: 5px; }
+    .board-thumbs .mini-portrait { width: 29%; max-width: 37px; border-radius: 4px; }
+    .board-thumbs .portrait { aspect-ratio: 1; }
+    .board-team-names { overflow: hidden; margin-top: 4px; color: #c2cecc; font-size: 6px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
+    .bracket-board[data-scale="close"] .board-thumbs .mini-portrait { width: 25%; max-width: 58px; }
+    .bracket-board[data-scale="close"] .board-team-label { font-size: 8px; }
+    .bracket-board[data-scale="close"] .board-team-names { font-size: 8px; }
+    .bracket-board[data-scale="final"] .board-thumbs .mini-portrait { width: 24%; max-width: 76px; }
+    .bracket-board[data-scale="final"] .board-team-label { font-size: 10px; }
+    .bracket-board[data-scale="final"] .board-team-names { font-size: 9px; }
+    .board-vs { color: #db9d73; font: 800 9px var(--sans); text-align: center; }
+    .board-team.advances { transform: scale(1.02); }
+    .board-team.advances .board-team-label { color: var(--lime); }
+    .board-team.tease-winner { transform: scale(1.06); }
+    .board-team.tease-winner .board-team-label { color: var(--lime); }
+    .board-team.tease-loser { filter: grayscale(.5); opacity: .58; }
+    .board-team.tease-loser .mini-portrait { animation: tease-ejection .48s ease both; }
+    @keyframes tease-ejection { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: .35; transform: translateY(-9px) scale(.78); filter: grayscale(1); } }
+    .board-team.ejected { position: relative; }
+    .board-team.ejected .board-team-label,.board-team.ejected .board-team-names { opacity: .2; }
+    .board-team.ejected .mini-portrait { position: relative; z-index: 3; animation: ejected-flight .72s cubic-bezier(.12,.72,.2,1) both; }
+    .match-teams > .board-team:first-child.ejected .mini-portrait:nth-child(1) { --eject-x:-38px; --eject-y:-30px; --eject-r:-24deg; }
+    .match-teams > .board-team:first-child.ejected .mini-portrait:nth-child(2) { --eject-x:-7px; --eject-y:-58px; --eject-r:8deg; animation-delay:90ms; }
+    .match-teams > .board-team:first-child.ejected .mini-portrait:nth-child(3) { --eject-x:-34px; --eject-y:17px; --eject-r:-34deg; animation-delay:180ms; }
+    .match-teams > .board-team:last-child.ejected .mini-portrait:nth-child(1) { --eject-x:38px; --eject-y:-30px; --eject-r:24deg; }
+    .match-teams > .board-team:last-child.ejected .mini-portrait:nth-child(2) { --eject-x:7px; --eject-y:-58px; --eject-r:-8deg; animation-delay:90ms; }
+    .match-teams > .board-team:last-child.ejected .mini-portrait:nth-child(3) { --eject-x:34px; --eject-y:17px; --eject-r:34deg; animation-delay:180ms; }
+    @keyframes ejected-flight { 0% { opacity:1; transform:translate(0,0) rotate(0) scale(1); filter:none; } 18% { opacity:1; transform:translate(0,-7px) rotate(0) scale(1.12); filter:brightness(1.6); } 100% { opacity:0; transform:translate(var(--eject-x,0),var(--eject-y,-45px)) rotate(var(--eject-r,0deg)) scale(.22); filter:grayscale(1) blur(1.5px); } }
+    .board-result { min-height: 13px; margin-top: 5px; color: #91a39f; font: 7px var(--mono); text-align: center; }
+    .match-cell.resolved .board-result { color: var(--mint); }
+    .match-cell.c-tease { border-color: rgba(163,229,206,.48); background: rgba(20,34,34,.9); }
+    .match-cell.c-tease .board-result { color: var(--mint); }
+    .match-cell.triple-match { min-height: 180px; }
+    .triple-teams { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
+    .triple-teams .board-team-label { font-size: 8px; }
+    .triple-teams .board-team-names { font-size: 7px; }
+    .board-team.escaped { transform: translateY(-8px); opacity: .78; }
+    .board-team.escaped .board-team-label { color: var(--blue); }
+    .match-cell.c-event { z-index: 2; overflow: visible; border-color: rgba(214,250,120,.7); background: radial-gradient(circle,rgba(214,250,120,.2),rgba(255,181,110,.12) 36%,#171e22 78%); box-shadow: 0 0 0 1px rgba(214,250,120,.23),0 0 35px rgba(214,250,120,.24); animation: c-impact .7s cubic-bezier(.1,.8,.1,1) both; }
+    .match-cell.c-event.focus-battle { z-index: 20; animation: c-impact-focus .7s cubic-bezier(.1,.8,.1,1) both; }
+    .match-cell.c-event:before { content: 'C'; position: absolute; inset: 50% auto auto 50%; z-index: 4; transform: translate(-50%,-57%) scale(.45) rotate(-16deg); color: rgba(232,255,165,.3); font: 900 clamp(74px,12vw,140px)/.8 var(--sans); text-shadow: 0 0 12px #caff58,0 0 34px #fff; pointer-events: none; animation: c-letter .65s cubic-bezier(.1,.8,.1,1) both; }
+    .match-cell.c-event:after { content: ''; position: absolute; inset: -25%; z-index: 3; border: 3px solid rgba(255,238,158,.7); border-radius: 50%; box-shadow: 0 0 25px rgba(255,223,130,.6),inset 0 0 25px rgba(255,223,130,.35); pointer-events: none; animation: c-wave .65s ease-out both; }
+    @keyframes c-impact { 0% { transform: scale(.86) rotate(-2deg); filter: brightness(2); } 36% { transform: scale(1.1) rotate(1deg); } 100% { transform: scale(1); filter: none; } }
+    @keyframes c-impact-focus { 0% { filter: brightness(2.2) saturate(1.8); } 36% { filter: brightness(1.7) saturate(1.4); } 100% { filter: none; } }
+    @keyframes c-letter { 0% { opacity: 0; transform: translate(-50%,-57%) scale(2.6) rotate(-25deg); } 26% { opacity: 1; } 100% { opacity: .93; transform: translate(-50%,-57%) scale(1) rotate(-8deg); } }
+    @keyframes c-wave { from { transform: scale(.35); opacity: 1; } to { transform: scale(1.15); opacity: 0; } }
+    .c-entry { display: none; position: relative; align-items: center; justify-content: center; gap: 5px; margin-top: 5px; padding: 4px; border: 1px solid rgba(214,250,120,.3); border-radius: 5px; background: rgba(214,250,120,.08); }
+    .match-cell.has-c .c-entry { display: flex; }
+    .c-letter-chip { flex: 0 0 auto; color: var(--lime); font: 900 18px/.9 var(--sans); text-shadow: 0 0 10px rgba(214,250,120,.9); }
+    .c-team-info { min-width: 0; color: #dff1ae; font: 6px var(--mono); text-align: left; }
+    .c-team-info b { display: block; margin-bottom: 2px; color: var(--lime); font-size: 7px; }
+    .c-thumbs { display: flex; gap: 2px; }
+    .c-thumbs .mini-portrait { width: 17px; border-radius: 3px; }
+    .c-thumbs .portrait { aspect-ratio: 1; }
+    .match-cell.c-event .c-entry { border-color: rgba(239,255,186,.7); background: rgba(214,250,120,.2); box-shadow: 0 0 20px rgba(214,250,120,.26); }
+    .c-callout { position: absolute; top: -8px; left: 50%; z-index: 5; transform: translateX(-50%); display: none; padding: 4px 8px; border: 1px solid #efffa5; border-radius: 999px; background: #b9e867; box-shadow: 0 0 20px rgba(214,250,120,.75); color: #172213; font: 900 8px var(--mono); white-space: nowrap; }
+    .match-cell.c-event .c-callout { display: block; }
+    .match-cell.reversal { border-color: rgba(255,181,110,.62); background: rgba(255,181,110,.13); box-shadow: 0 0 20px rgba(255,181,110,.16); }
+    .match-cell.reversal .board-result { color: var(--orange); }
+    .match-legend { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; color: #8d9da2; font: 8px var(--mono); }
+    .match-legend b { color: var(--lime); font-weight: 500; }
+    .match-cell.reveal-in { animation: match-in .34s ease both; animation-delay: var(--delay); }
+    @keyframes match-in { from { opacity: 0; transform: scale(.9) translateY(6px); } to { opacity: 1; transform: none; } }
+    .battle-team { min-width: 0; text-align: center; }
+    .battle-team-title { color: #a0b0b3; font: 8px var(--mono); letter-spacing: .08em; }
+    .battle-portraits { display: flex; justify-content: center; gap: 5px; margin-top: 9px; }
+    .battle-portraits .mini-portrait { width: min(24%,68px); border-color: rgba(224,237,244,.2); border-radius: 7px; }
+    .battle-portraits .portrait { aspect-ratio: 4/5; }
+    .battle-team-name { overflow: hidden; margin-top: 7px; color: #e1e9e8; font-size: 10px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .battle-team-state { min-height: 14px; margin-top: 4px; color: var(--dim); font: 8px var(--mono); }
+    .battle-team.winner .battle-team-state { color: var(--lime); }
+    .battle-team.loser .battle-team-state { color: var(--red); }
+    .battle-team.invader .battle-team-state { color: var(--orange); }
+    .versus { display: grid; place-items: center; color: #ffad79; font: italic 800 20px var(--sans); text-shadow: 0 0 18px rgba(255,173,121,.25); }
+    .battle-announcement { min-height: 34px; display: grid; place-items: center; margin-top: 8px; color: #9caeb1; font-size: 9px; text-align: center; }
+    .battle-announcement b { color: var(--lime); font-weight: 700; }
+    .progress-bar { height: 3px; overflow: hidden; border-radius: 5px; background: rgba(255,255,255,.08); }
+    .progress-bar i { width: 0; height: 100%; display: block; border-radius: inherit; background: linear-gradient(90deg,var(--mint),var(--lime)); box-shadow: 0 0 12px rgba(214,250,120,.4); transition: width .25s; }
+    .battle-log { display: grid; gap: 5px; max-height: 205px; overflow: auto; margin-top: 10px; scrollbar-color: #394952 transparent; scrollbar-width: thin; }
+    .battle-log-row { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border: 1px solid rgba(224,237,244,.07); border-radius: 6px; background: rgba(255,255,255,.018); color: #95a5a9; font-size: 8px; animation: log-in .24s ease both; }
+    @keyframes log-in { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: none; } }
+    .log-round { flex: 0 0 auto; color: #6f8884; font: 7px var(--mono); }
+    .log-copy { flex: 1; min-width: 0; }
+    .log-copy b { color: #d9e4e1; font-weight: 600; }
+    .log-result { flex: 0 0 auto; color: var(--lime); font: 7px var(--mono); }
+    .battle-log-row.c-event { border-color: rgba(214,250,120,.44); background: rgba(214,250,120,.09); box-shadow: 0 0 16px rgba(214,250,120,.08); }
+    .battle-log-row.c-event .log-result { color: var(--lime); font-weight: 900; }
+    .battle-log-row.escape { border-color: rgba(139,202,255,.25); background: rgba(139,202,255,.04); }
+    .battle-log-row.escape .log-result { color: var(--blue); font-weight: 800; }
+    .battle-log-row.bye .log-result { color: var(--blue); }
+    .champion-panel { padding: 19px; text-align: center; background: radial-gradient(ellipse at top,rgba(214,250,120,.12),transparent 58%),rgba(7,12,16,.25); }
+    .champion-panel h2 { margin: 0; color: var(--lime); font-size: 11px; font-weight: 500; letter-spacing: .15em; }
+    .champion-panel > p { margin: 7px 0 14px; color: #a4b4b4; font-size: 9px; }
+    .champion-team { min-height: 226px; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: nowrap; perspective: 900px; }
+    .champion-member { position: relative; width: min(30%,190px); min-width: 116px; overflow: hidden; border: 1px solid rgba(224,237,244,.15); border-radius: 9px; background: #172129; animation: champion-rise .55s ease both; animation-delay: var(--delay); }
+    @keyframes champion-rise { from { opacity: 0; transform: translateY(12px) scale(.96); } to { opacity: 1; transform: none; } }
+    .champion-member.mvp { border-color: rgba(214,250,120,.65); box-shadow: 0 0 30px rgba(214,250,120,.12); }
+    .champion-team.mixing .champion-member { animation: candidate-mix .72s ease-in-out infinite alternate; animation-delay: var(--delay); }
+    .champion-team.mixing .champion-member:nth-child(2) { animation-direction: alternate-reverse; }
+    .champion-team.revealed .champion-member:not(.mvp) { transform: scale(.78) translateY(4px); opacity: .46; filter: saturate(.55); }
+    .champion-team.revealed .champion-member:not(.mvp) { animation: side-lock .55s ease both; }
+    .champion-team.revealed .champion-member.mvp { z-index: 2; transform: scale(1.13) translateY(-7px); opacity: 1; filter: none; border-color: #efffa5; box-shadow: 0 0 0 2px rgba(214,250,120,.25),0 0 45px rgba(214,250,120,.55); animation: mvp-lock .6s cubic-bezier(.15,.8,.1,1) both; }
+    @keyframes candidate-mix { 0% { transform: translate(-20px,3px) rotateY(-22deg) rotate(-7deg) scale(.84); filter: blur(1.2px); } 48% { transform: translate(0,-12px) rotateY(18deg) rotate(6deg) scale(1.08); filter: none; } 100% { transform: translate(20px,2px) rotateY(-16deg) rotate(-5deg) scale(.88); filter: blur(.3px); } }
+    @keyframes mvp-lock { 0% { transform: scale(.4) translateY(26px); filter: brightness(3) blur(5px); } 65% { transform: scale(1.23) translateY(-10px); filter: brightness(1.8); } 100% { transform: scale(1.13) translateY(-7px); filter: none; } }
+    @keyframes side-lock { from { transform: scale(1) translateY(0); opacity: 1; filter: none; } to { transform: scale(.78) translateY(4px); opacity: .46; filter: saturate(.55); } }
+    .mvp-ribbon { display: none; position: absolute; left: 50%; top: 6px; z-index: 4; transform: translateX(-50%) rotate(-4deg); padding: 5px 10px; border: 1px solid #f6ffd0; border-radius: 4px; background: linear-gradient(100deg,#d6fa78,#fff0a1); color: #1c2717; box-shadow: 0 0 20px rgba(214,250,120,.75); font: 900 9px var(--mono); white-space: nowrap; }
+    .champion-team.revealed .champion-member.mvp .mvp-ribbon { display: block; }
+    .champion-member .portrait { aspect-ratio: 4/4.3; }
+    .champion-info { padding: 8px 6px 10px; }
+    .champion-info small { color: #7f928d; font: 7px var(--mono); }
+    .champion-info b { display: block; margin-top: 4px; font-size: 11px; }
+    .champion-member.mvp .champion-info small { color: var(--lime); }
+    .final-callout { max-width: 440px; margin: 15px auto 0; padding: 11px; border: 1px solid rgba(214,250,120,.17); border-radius: 7px; background: rgba(214,250,120,.035); color: #c2d0c5; font-size: 10px; line-height: 1.7; }
+    .final-callout b { color: var(--lime); }
+    .sim-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 18px; border-top: 1px solid var(--line); color: #809197; font-size: 8px; }
+    .sim-footer .phase-status { color: #adc0bb; font: 8px var(--mono); }
+    .sim-footer .primary-button { min-height: 32px; padding: 0 13px; font-size: 9px; }
+    .sim-footer-actions { display: flex; align-items: center; justify-content: flex-end; gap: 7px; flex-wrap: wrap; }
+    .skip-round-button { min-height: 32px; padding-inline: 10px; color: var(--orange); border-color: rgba(255,181,110,.3); }
+    .toast { position: fixed; left: 50%; bottom: 23px; z-index: 100; transform: translate(-50%,15px); opacity: 0; pointer-events: none; padding: 11px 15px; border: 1px solid rgba(163,229,206,.3); border-radius: 7px; background: #1b282a; color: #e1f3e9; box-shadow: 0 12px 35px rgba(0,0,0,.35); font-size: 10px; transition: .25s; }
+    .toast.show { transform: translate(-50%,0); opacity: 1; }
+    footer { display: flex; justify-content: space-between; gap: 15px; padding: 14px 0 21px; border-top: 1px solid var(--line); color: #65757b; font: 8px var(--mono); letter-spacing: .03em; }
+    footer a { color: #9ab6a8; text-decoration: underline; text-underline-offset: 3px; }
+    @media (max-width: 1020px) {
+      .character-grid { grid-template-columns: repeat(5,minmax(0,1fr)); }
+      .home-hero { grid-template-columns: 1fr .72fr; }
+      .hero-copy { padding: 29px; }
+      .team-grid { grid-template-columns: repeat(4,minmax(0,1fr)); }
+      .bracket-board[data-scale="wide"] { grid-template-columns: repeat(4,minmax(0,1fr)); }
+    }
+    @media (max-width: 700px) {
+      .shell { width: calc(100% - 28px); }
+      .topbar { height: auto; min-height: 65px; flex-wrap: wrap; gap: 5px; padding: 10px 0; }
+      .brand-label { font-size: 9px; }
+      .nav { order: 3; width: 100%; justify-content: space-between; }
+      .nav-button { flex: 1; padding: 8px 4px; font-size: 9px; }
+      .beta-tag { margin-left: 0; }
+      main { padding-top: 19px; }
+      .home-hero { display: flex; flex-direction: column; }
+      .hero-copy { padding: 26px 22px 19px; }
+      h1 { font-size: 37px; }
+      .hero-art { min-height: 240px; }
+      .hero-character-frame { width: min(72%,240px); height: 205px; }
+      .home-stats { gap: 7px; }
+      .stat-card { min-height: 70px; padding: 9px; gap: 8px; }
+      .stat-icon { width: 28px; height: 28px; font-size: 12px; }
+      .stat-copy small { font-size: 7px; }
+      .stat-copy strong { font-size: 14px; }
+      .home-bottom { grid-template-columns: 1fr; }
+      .flow { gap: 6px; }
+      .flow-step { padding: 8px 6px; }
+      .flow-step b { font-size: 8px; }
+      .page-heading { align-items: start; flex-direction: column; }
+      .roster-toolbar { align-items: start; flex-direction: column; }
+      .toolbar-actions { width: 100%; }
+      .search { width: 100%; flex: 1 1 100%; }
+      .character-grid { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; padding: 9px; }
+      .history-grid { grid-template-columns: 1fr; }
+      .overlay { padding: 9px; }
+      .sim-window { max-height: 96vh; }
+      .sim-scroll { padding: 12px; }
+      .phase-top h2 { font-size: 17px; }
+      .team-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+      .bracket-board[data-scale="wide"] { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 5px; }
+      .bracket-board[data-scale="mid"] { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
+      .bracket-board[data-scale="close"] { grid-template-columns: repeat(2,minmax(0,1fr)); padding: 2px; gap: 7px; }
+      .bracket-board[data-scale="final"] { grid-template-columns: minmax(0,1fr); padding: 2px; }
+      .arena-viewport { padding: 5px; }
+      .match-cell { min-height: 104px; padding: 4px; }
+      .board-team-names { font-size: 5px; }
+      .c-team-info { font-size: 5px; }
+      .champion-team { min-height: 190px; gap: 5px; }
+      .champion-member { width: 29%; min-width: 83px; }
+      .sim-footer { padding-inline: 12px; }
+      .sim-footer { display: grid; grid-template-columns: 1fr; gap: 8px; }
+      .sim-footer > span { max-width: none; line-height: 1.5; }
+      .sim-footer-actions { justify-content: flex-start; }
+      .sim-footer-actions button { white-space: nowrap; }
+      footer { flex-direction: column; line-height: 1.65; }
+    }
+    @media (max-width: 390px) {
+      .shell { width: calc(100% - 20px); }
+      h1 { font-size: 32px; }
+      .hero-actions { align-items: start; flex-direction: column; }
+      .home-stats { grid-template-columns: 1fr; }
+      .stat-card { min-height: 59px; }
+      .stat-copy strong { margin-top: 2px; }
+      .character-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .phase-count { font-size: 8px; }
+      .ejected-title { max-width: 56px; line-height: 1.4; }
+      .battle-team-name { font-size: 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *,*::before,*::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="#home" data-view-link="home" aria-label="루미아 생존 토너먼트 홈">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2.8 20.4 7v9.7L12 21l-8.4-4.3V7L12 2.8Z" stroke="currentColor" stroke-width="1.2"/><path d="m8 14.8 4-8.6 4 8.6-4-2.1-4 2.1Z" fill="currentColor"/></svg></span>
+        <span class="brand-label">LUMIA SURVIVOR CUP<small>TEAM ROULETTE · FAN SIMULATOR</small></span>
+      </a>
+      <div class="nav" role="navigation" aria-label="메인 메뉴">
+        <button class="nav-button active" data-view="home">메인</button>
+        <button class="nav-button" data-view="roster">캐릭터 목록 <span id="navRosterCount">91</span></button>
+        <button class="nav-button" data-view="history">뽑기 기록</button>
+      </div>
+      <span class="beta-tag">LUMIA ISLAND / LIVE</span>
+    </header>
+
+    <main>
+      <section class="page active" id="page-home" aria-label="메인 화면">
+        <div class="home-hero">
+          <div class="hero-copy">
+            <div class="hero-kicker"><i></i><span class="eyebrow">SURVIVOR CUP · SEASON 13</span></div>
+            <h1>마지막까지 살아남을<br><span>실험체를 뽑아라.</span></h1>
+            <p>참가 명단을 섞어 3인 팀을 만들고, 루미아 섬 토너먼트를 시작하세요. 마지막 생존 팀에서 MVP로 뽑힌 캐릭터가 오늘의 당첨자입니다.</p>
+            <div class="focus-picker">
+              <label for="heroFocusSelect">시작 전 집중 캐릭터</label>
+              <select id="heroFocusSelect" aria-label="집중해서 볼 캐릭터 선택"></select>
+              <span class="focus-picker-hint" id="focusPickerHint">선택한 실험체가 빛나는 테두리로 강조돼요.</span>
+            </div>
+            <div class="hero-actions">
+              <button class="primary-button" id="startRoulette"><span>룰렛 시작</span><span class="arrow">↗</span></button>
+              <span class="hero-hint">제외 설정은 캐릭터 목록에서 바꿀 수 있어요.</span>
+            </div>
+          </div>
+          <div class="hero-art">
+            <div class="hero-id">LUMIA SURVIVOR<span><b>SUBJECT · 007</b></span></div>
+            <div class="hero-character-frame"><span class="portrait" id="heroPortrait"></span></div>
+            <div class="hero-caption" id="heroCaption">TODAY'S SURVIVOR · 현우</div>
+          </div>
+        </div>
+        <div class="home-stats">
+          <div class="stat-card"><span class="stat-icon">◎</span><div class="stat-copy"><small>ROSTER / ACTIVE</small><strong id="homeActive">91<span>명 참가</span></strong></div></div>
+          <div class="stat-card"><span class="stat-icon">▤</span><div class="stat-copy"><small>3-PERSON SQUADS</small><strong id="homeTeams">30<span>팀 구성 예정</span></strong></div></div>
+          <div class="stat-card"><span class="stat-icon">↘</span><div class="stat-copy"><small>ROULETTE HISTORY</small><strong id="homeRuns">0<span>회 진행</span></strong></div></div>
+        </div>
+        <div class="home-bottom">
+          <article class="info-card">
+            <div class="info-head"><h2>한 판의 진행 방식</h2><span>TOURNAMENT FLOW</span></div>
+            <div class="flow">
+              <div class="flow-step"><small>01 · MIX</small><b>참가자 섞기</b></div>
+              <div class="flow-step"><small>02 · SQUAD</small><b>3인 팀 편성</b></div>
+              <div class="flow-step"><small>03 · BATTLE</small><b>팀 토너먼트</b></div>
+              <div class="flow-step"><small>04 · MVP</small><b>당첨자 선정</b></div>
+            </div>
+          </article>
+          <article class="info-card">
+            <div class="info-head"><h2>섬의 변수</h2><span>NO MATCH IS SAFE</span></div>
+            <div class="rules-list">
+              <div class="rule"><span class="rule-mark">01</span><span>3명으로 묶이지 않는 남은 실험체는 팀 편성 중 <b>사출</b>돼요.</span></div>
+              <div class="rule"><span class="rule-mark">02</span><span>홀수 팀이 남으면 마지막 교전에 C가 난입해 두 팀을 함께 사출시킬 수 있어요.</span></div>
+              <div class="rule"><span class="rule-mark">03</span><span>최종 3팀 라운드에서는 C 난입과 한 팀 탈출이 각각 50% 확률로 결정돼요. 사출된 팀은 재참가하지 않아요.</span></div>
+              <div class="rule"><span class="rule-mark">04</span><span>최종 팀의 3명이 섞인 뒤 한 명이 가운데 MVP로 선정돼요.</span></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="page-roster" aria-label="캐릭터 목록">
+        <div class="page-heading"><div><div class="eyebrow">SURVIVOR DATABASE / 01</div><h2>캐릭터 목록</h2></div><p>뽑기에서 빼고 싶은 실험체는 카드의 참가 버튼을 눌러주세요.</p></div>
+        <div class="panel roster-panel">
+          <div class="roster-toolbar">
+            <div class="roster-counts">참가 <b id="rosterActiveCount">91</b>명 · 제외 <span id="rosterExcludedCount">0</span>명 · 전체 <span id="rosterTotalCount">91</span>명</div>
+            <div class="toolbar-actions">
+              <input class="search" id="rosterSearch" type="search" placeholder="캐릭터 이름 검색" aria-label="캐릭터 이름 검색" autocomplete="off">
+              <button class="soft-button" id="includeAll">전체 참가</button>
+              <button class="soft-button danger" id="excludeAll">전체 제외</button>
+            </div>
+          </div>
+          <div class="character-grid" id="characterGrid"></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-history" aria-label="뽑기 기록">
+        <div class="page-heading"><div><div class="eyebrow">SURVIVOR CUP / ARCHIVE</div><h2>뽑기 기록</h2></div><div class="history-actions"><p id="historyCountLabel">최근 기록 0개</p><button class="soft-button danger" id="clearHistory">기록 초기화</button></div></div>
+        <div class="history-grid" id="historyGrid"></div>
+      </section>
+    </main>
+
+    <footer><span>FAN-MADE CHARACTER ROULETTE · NOT AFFILIATED WITH NIMBLE NEURON</span><span>캐릭터 이미지: <a href="https://dak.gg/er/characters/Hyunwoo/introduction" target="_blank" rel="noreferrer">DAK.GG</a> · 최신 실험체 세레스 포함</span></footer>
+  </div>
+
+  <div class="overlay" id="simOverlay" role="dialog" aria-modal="true" aria-labelledby="phaseTitle">
+    <div class="sim-window">
+      <header class="sim-header"><div class="sim-brand"><i></i><span>LUMIA SURVIVOR CUP / MATCH BROADCAST</span></div><button class="sim-close" id="closeSimulation" aria-label="닫기" disabled>×</button></header>
+      <div class="sim-scroll">
+        <div class="phase-top"><div><div class="phase-name" id="phaseName">PHASE 01 · SQUAD DRAFT</div><h2 id="phaseTitle">실험체를 팀으로 편성합니다</h2></div><div class="phase-count" id="phaseCount">참가자 <b>91명</b><br>팀 편성 중</div></div>
+
+        <section class="assembly-panel" id="assemblyPanel">
+          <div class="roulette-reel" id="rouletteReel" aria-label="참가 실험체 섞는 중"></div>
+          <div class="assembly-meta"><span>RANDOMIZED SURVIVORS</span><b id="assemblyCount">팀 편성 대기</b></div>
+          <div class="team-grid" id="assemblyTeams"></div>
+          <div class="ejected-strip"><span class="ejected-title">팀 미구성 사출</span><div class="ejected-people" id="ejectedPeople"><span class="ejected-chip">3의 배수에 맞춰 남는 실험체</span></div></div>
+        </section>
+
+        <section class="arena-panel" id="arenaPanel" hidden>
+          <div class="arena-topline"><strong id="arenaRound">ROUND 01</strong><span id="arenaTeamsLeft">생존 팀 30</span></div>
+          <div class="match-legend"><span>진행 버튼으로 한 경기씩 공개</span><b>전체 대진 유지 · 현재 경기 중앙 확대</b></div>
+          <div class="arena-viewport"><div class="bracket-board" id="bracketBoard" data-scale="wide" aria-live="polite"></div></div>
+          <div class="battle-announcement" id="battleAnnouncement">팀 배틀을 준비하고 있습니다.</div>
+          <div class="progress-bar"><i id="battleProgress"></i></div>
+          <div class="battle-log" id="battleLog" aria-live="polite"></div>
+        </section>
+
+        <section class="champion-panel" id="championPanel" hidden>
+          <h2>THE LAST SQUAD STANDING</h2><p id="championSub">마지막 생존 팀에서 오늘의 MVP를 선정합니다.</p>
+          <div class="champion-team" id="championTeam"></div>
+          <div class="final-callout" id="finalCallout"></div>
+        </section>
+      </div>
+      <div class="sim-footer"><span class="phase-status" id="phaseStatus">루미아 섬에 참가자 집결 중</span><div class="sim-footer-actions"><button class="soft-button skip-round-button" id="skipRoundButton" hidden>라운드 빠르게 스킵 ⏩</button><button class="primary-button" id="advanceButton" hidden disabled><span id="advanceLabel">다음 진행</span><span class="arrow">↗</span></button><button class="primary-button" id="finishButton" hidden>결과 확인 <span class="arrow">↗</span></button></div><span id="simFootNote">진행 중에는 창을 닫을 수 없습니다.</span></div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      'use strict';
+      const roster = [
+        ['가넷','Garnet'],['나딘','Nadine'],['나타폰','Nathapon'],['니아','NiaH'],['니키','Nicky'],['다니엘','Daniel'],['다르코','Darko'],['데비&마를렌','DebiMarlene'],['띠아','Tia'],['라우라','Laura'],
+        ['레녹스','Lenox'],['레니','Leni'],['레온','Leon'],['로지','Rozzi'],['루치아','Lucia'],['루크','Luke'],['르노어','Lenore'],['리 다이린','LiDailin'],['리오','Rio'],['마르티나','Martina'],
+        ['마이','Mai'],['마커스','Markus'],['매그너스','Magnus'],['미르카','Mirka'],['바냐','Vanya'],['바바라','Barbara'],['버니스','Bernice'],['블레어','Blair'],['비앙카','Bianca'],['비형','Bihyung'],
+        ['샬럿','Charlotte'],['세레스','Seres'],['셀린','Celine'],['쇼우','Xiukai'],['쇼이치','Shoichi'],['수아','Sua'],['슈린','Xuelin'],['시셀라','Sissela'],['실비아','Silvia'],['아델라','Adela'],
+        ['아드리아나','Adriana'],['아디나','Adina'],['아르다','Arda'],['아비게일','Abigail'],['아야','Aya'],['아이솔','Isol'],['아이작','Isaac'],['알렉스','Alex'],['알론소','Alonso'],['얀','Jan'],
+        ['에스텔','Estelle'],['에이든','Aiden'],['에키온','Echion'],['엘레나','Elena'],['엠마','Emma'],['요한','Johann'],['윌리엄','William'],['유민','Yumin'],['유스티나','Justyna'],['유키','Yuki'],
+        ['이렘','Irem'],['이바','Eva'],['이슈트반','Istvan'],['이안','Ian'],['일레븐','Eleven'],['자히르','Zahir'],['재키','Jackie'],['제니','Jenny'],['츠바메','Tsubame'],['카밀로','Camilo'],
+        ['카티야','Katja'],['칼라','Kala'],['캐시','Cathy'],['케네스','Kenneth'],['코렐라인','Coraline'],['크레이버','Craver'],['클로에','Chloe'],['키아라','Chiara'],['타지아','Tazia'],['테오도르','Theodore'],
+        ['펜리르','Fenrir'],['펠릭스','Felix'],['프리야','Priya'],['피오라','Fiora'],['피올로','Piolo'],['하트','Hart'],['헤이즈','Haze'],['헨리','Henry'],['현우','Hyunwoo'],['혜진','Hyejin'],['히스이','Hisui']
+      ].map(([name,code],id) => ({id,name,code}));
+
+      const HISTORY_COOKIE = 'lumia_cup_history_v2';
+      const PREFS_COOKIE = 'lumia_cup_prefs_v2';
+      const MAX_HISTORY = 50;
+      const ROUND_BOARD_SETTLE_MS = 460;
+      const MATCH_REVEAL_MS = 760;
+      const C_REVEAL_MS = 1900;
+      const THREE_TEAM_C_CHANCE = .5;
+      const PORTRAIT_CODE_ALIASES = {NiaH:'Niah',Ian:'Lyanh',Yumin:'YuMin',Kala:'Karla'};
+      const state = { excluded:new Set(), history:[], runs:0, focusId:null };
+      let activePage = 'home';
+      let running = false;
+      let advanceResolver = null;
+      let roundSkipRequested = false;
+      let toastTimer;
+      const $ = (selector, parent=document) => parent.querySelector(selector);
+      const $$ = (selector, parent=document) => [...parent.querySelectorAll(selector)];
+      const esc = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+      const initial = name => [...name.replace('&','')].slice(0,1).join('');
+      const subject = id => roster[id] || {id:-1,name:'알 수 없음',code:'Unknown'};
+      const portraitCode = code => PORTRAIT_CODE_ALIASES[code] || code;
+      const portraitURL = (character, skin='S000', version='13.1.0') => `https://cdn.dak.gg/assets/er/game-assets/${version}/ui/characterhalfsize/CharFull_${character.code}_${skin}.png`;
+      function portraitSources(character) {
+        const code=portraitCode(character.code);
+        const sourceCharacter={code};
+        const skins=character.code==='Hyunwoo'?['S000','S002','S001']:['S000','S001','S002'];
+        const sources=[];
+        for(const version of ['13.1.0','11.3.0','10.7.0','8.5.0','1.33.0']) {
+          for(const skin of skins) sources.push(portraitURL(sourceCharacter,skin,version));
+        }
+        for(const skin of ['S000','S001']) {
+          sources.push(`https://cdn.dak.gg/assets/er/game-assets/13.1.0/CharProfile_${code}_${skin}.png`);
+          sources.push(`https://cdn.dak.gg/assets/er/game-assets/13.1.0/CharCommunity_${code}_${skin}.png`);
+        }
+        if(code!==character.code) sources.push(portraitURL(character,'S000','8.5.0'));
+        sources.push(`https://cdn.dak.gg/assets/er/game-assets/0.81.0/characterhalfsize/CharFull_${character.code}_S000.png`);
+        return [...new Set(sources)];
+      }
+      function portraitHTML(character, extra='') {
+        const fallback = `<span class="portrait-fallback">${esc(initial(character.name))}</span>`;
+        const focused=state.focusId===character.id?' is-focused':'';
+        const source=portraitSources(character)[0];
+        return `<span class="portrait ${extra}${focused}" data-id="${character.id}">${fallback}<img src="${source}" alt="${esc(character.name)} 초상화" loading="lazy" data-code="${esc(character.code)}" data-source-index="0" data-local-fallback="${character.code==='Hyunwoo'?'1':'0'}"></span>`;
+      }
+      function bindPortraits(root=document) {
+        $$('img[data-code]',root).forEach(img => {
+          if(img.dataset.fallbackBound==='1') return;
+          img.dataset.fallbackBound='1';
+          img.addEventListener('error', () => {
+            const sources=portraitSources({code:img.dataset.code});
+            const next=Number(img.dataset.sourceIndex||0)+1;
+            if(next<sources.length){img.dataset.sourceIndex=String(next);img.src=sources[next];return;}
+            if(img.dataset.localFallback==='1'){img.dataset.localFallback='0';img.src='assets/portraits/hyunwoo.png';return;}
+            img.remove();
+          });
+        });
+      }
+      function encodeCookie(value) { return btoa(value).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/g,''); }
+      function decodeCookie(value) { return atob(value.replace(/-/g,'+').replace(/_/g,'/') + '='.repeat((4-value.length%4)%4)); }
+      function readCookie(name) {
+        try { const pair=document.cookie.split('; ').find(item=>item.startsWith(name+'=')); return pair?decodeCookie(pair.slice(name.length+1)):null; }
+        catch (_) { return null; }
+      }
+      function writeCookie(name,value) { try { document.cookie=`${name}=${encodeCookie(value)}; Max-Age=31536000; Path=/; SameSite=Lax`; } catch (_) {} }
+      function localGet(key) { try { return localStorage.getItem(key); } catch (_) { return null; } }
+      function localSet(key,value) { try { localStorage.setItem(key,value); } catch (_) {} }
+      function saveState() {
+        const history=JSON.stringify(state.history.slice(0,MAX_HISTORY));
+        const prefs=JSON.stringify({e:[...state.excluded],r:state.runs,f:state.focusId});
+        writeCookie(HISTORY_COOKIE,history); writeCookie(PREFS_COOKIE,prefs);
+        localSet(HISTORY_COOKIE,history); localSet(PREFS_COOKIE,prefs);
+      }
+      function loadState() {
+        try { const value=readCookie(HISTORY_COOKIE) ?? localGet(HISTORY_COOKIE); const data=JSON.parse(value||'[]'); if(Array.isArray(data)) state.history=data.slice(0,MAX_HISTORY); } catch (_) {}
+        try { const value=readCookie(PREFS_COOKIE) ?? localGet(PREFS_COOKIE); const prefs=JSON.parse(value||'{}'); if(Array.isArray(prefs.e)) state.excluded=new Set(prefs.e.filter(id=>Number.isInteger(id)&&id>=0&&id<roster.length)); if(Number.isInteger(prefs.r)) state.runs=Math.max(0,prefs.r); if(Number.isInteger(prefs.f)&&prefs.f>=0&&prefs.f<roster.length)state.focusId=prefs.f; } catch (_) {}
+      }
+      function toast(message) {
+        const node=$('#toast'); node.textContent=message; node.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>node.classList.remove('show'),2400);
+      }
+      function wait(ms) { return new Promise(resolve=>setTimeout(resolve,ms)); }
+      async function waitDuringRound(ms,minimumWhenSkipping=0) {
+        const started=Date.now();
+        while(Date.now()-started<ms){
+          const elapsed=Date.now()-started;
+          if(roundSkipRequested&&elapsed>=minimumWhenSkipping)return;
+          await wait(Math.min(50,ms-elapsed));
+        }
+      }
+      function waitForAdvance(label,status) {
+        const button=$('#advanceButton');
+        $('#advanceLabel').textContent=label;
+        if(status)$('#phaseStatus').textContent=status;
+        button.hidden=false;button.disabled=false;
+        return new Promise(resolve=>{advanceResolver=resolve;});
+      }
+      function advanceCurrentStage() {
+        if(!advanceResolver)return;
+        const resolve=advanceResolver;advanceResolver=null;
+        $('#advanceButton').hidden=true;$('#advanceButton').disabled=true;
+        resolve();
+      }
+      function skipCurrentRound() {
+        const button=$('#skipRoundButton');
+        if(!running||button.hidden)return;
+        roundSkipRequested=true;
+        button.hidden=true;
+        $('#battleAnnouncement').textContent='이번 라운드의 남은 결과를 빠르게 공개합니다.';
+        $('#phaseStatus').textContent='현재 라운드 빠르게 진행 중';
+        advanceCurrentStage();
+      }
+      function shuffle(list) {
+        const copy=[...list];
+        for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]];}
+        return copy;
+      }
+      function available() { return roster.filter(character=>!state.excluded.has(character.id)); }
+      function updateCounts() {
+        const count=available().length, teams=Math.floor(count/3), loose=count%3;
+        $('#homeActive').innerHTML=`${count}<span>명 참가</span>`;
+        $('#homeTeams').innerHTML=`${teams}<span>팀 구성 예정${loose?` · ${loose}명 남음`:''}</span>`;
+        $('#homeRuns').innerHTML=`${state.runs}<span>회 진행</span>`;
+        $('#rosterActiveCount').textContent=count;
+        $('#rosterExcludedCount').textContent=state.excluded.size;
+        $('#rosterTotalCount').textContent=roster.length;
+        $('#navRosterCount').textContent=roster.length;
+        $('#startRoulette').disabled=count<3||running;
+        $('#startRoulette').querySelector('span').textContent=count<3?'참가 실험체 3명 이상 필요':'룰렛 시작';
+      }
+      function renderHeroPortrait() {
+        const character=state.focusId===null?roster.find(item=>item.name==='현우'):subject(state.focusId);
+        $('.hero-character-frame').classList.toggle('is-focused',state.focusId!==null);
+        $('#heroPortrait').innerHTML=portraitHTML(character);
+        $('#heroCaption').textContent=`TODAY'S SURVIVOR · ${character.name}${state.focusId===null?'':' · FOCUS'}`;
+        bindPortraits($('#heroPortrait'));
+      }
+      function renderFocusPicker() {
+        const picker=$('#heroFocusSelect');
+        picker.innerHTML=`<option value="">선택 안 함</option>${roster.map(character=>`<option value="${character.id}">${esc(character.name)}</option>`).join('')}`;
+        picker.value=state.focusId===null?'':String(state.focusId);
+        $('#focusPickerHint').textContent=state.focusId===null?'선택한 실험체가 빛나는 테두리로 강조돼요.':`${subject(state.focusId).name} 집중 중 · 우승 팀에서 더 잘 보여요.`;
+      }
+      function renderRoster() {
+        const query=$('#rosterSearch').value.trim().toLocaleLowerCase('ko');
+        const matches=roster.filter(character=>character.name.toLocaleLowerCase('ko').includes(query)||character.code.toLocaleLowerCase('en').includes(query));
+        const grid=$('#characterGrid');
+        if(!matches.length){grid.innerHTML='<div class="empty-grid">검색한 캐릭터가 없습니다.</div>';return;}
+        grid.innerHTML=matches.map(character=>{
+          const excluded=state.excluded.has(character.id);
+          const focused=state.focusId===character.id;
+          return `<article class="character-card${excluded?' excluded':''}${focused?' focused':''}" data-card-id="${character.id}"><span class="card-index">${String(character.id+1).padStart(2,'0')}</span><span class="card-stamp">EJECTED</span>${portraitHTML(character)}<div class="card-body"><div class="char-name" title="${esc(character.name)}">${esc(character.name)}</div><div class="char-roman">${esc(character.code.toUpperCase())}</div><div class="card-actions"><button class="toggle-button" data-toggle-id="${character.id}" aria-pressed="${excluded}">${excluded?'다시 참가':'뽑기 제외'}</button><button class="focus-toggle" data-focus-id="${character.id}" aria-pressed="${focused}" title="토너먼트에서 강조 표시">${focused?'★ 집중 중':'집중'}</button></div></div></article>`;
+        }).join('');
+        bindPortraits(grid);
+        $$('[data-toggle-id]',grid).forEach(button=>button.addEventListener('click',()=>{
+          const id=Number(button.dataset.toggleId);
+          if(state.excluded.has(id))state.excluded.delete(id);else state.excluded.add(id);
+          saveState();renderRoster();updateCounts();
+        }));
+        $$('[data-focus-id]',grid).forEach(button=>button.addEventListener('click',()=>{
+          const id=Number(button.dataset.focusId);
+          state.focusId=state.focusId===id?null:id;
+          saveState();renderFocusPicker();renderHeroPortrait();renderRoster();toast(state.focusId===null?'집중 캐릭터 설정을 해제했어요.':`${subject(id).name}을(를) 집중 표시합니다.`);
+        }));
+      }
+      function formatDate(timestamp) { return new Intl.DateTimeFormat('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Seoul'}).format(new Date(timestamp)); }
+      function renderHistory() {
+        const grid=$('#historyGrid');
+        $('#historyCountLabel').textContent=`최근 기록 ${state.history.length}개`;
+        if(!state.history.length){grid.innerHTML='<div class="history-empty"><div><i>⌖</i>아직 룰렛 기록이 없습니다.<br>첫 생존 토너먼트를 시작해보세요.</div></div>';return;}
+        grid.innerHTML=state.history.map(entry=>{
+          const [timestamp,mvpId,members,teamCount,roundCount,ejected,,cAttacks=0,escapes=0]=entry;
+          const mvp=subject(mvpId), team=members.map(subject);
+          return `<article class="history-card"><div class="history-head"><b>SURVIVOR CUP · ${teamCount} TEAMS</b><time>${formatDate(timestamp)}</time></div><div class="winner-row"><div class="winner-avatar">${portraitHTML(mvp)}</div><div class="winner-copy"><small>★ TODAY'S MVP</small><strong>${esc(mvp.name)}</strong><span>최종 우승 팀에서 선정된 당첨 캐릭터</span></div></div><div class="team-line">${team.map(character=>`<div class="mini-portrait">${portraitHTML(character)}</div>`).join('')}<div class="team-members">${team.map(character=>esc(character.name)).join(' · ')}</div><span class="history-stats">${roundCount}R · 사출 ${ejected} · C ${cAttacks} · 탈출 ${escapes}</span></div></article>`;
+        }).join('');
+        bindPortraits(grid);
+      }
+      function setPage(page) {
+        activePage=page;
+        $$('.page').forEach(section=>section.classList.toggle('active',section.id===`page-${page}`));
+        $$('.nav-button').forEach(button=>button.classList.toggle('active',button.dataset.view===page));
+        if(page==='roster')renderRoster();
+        if(page==='history')renderHistory();
+        window.scrollTo({top:0,behavior:'smooth'});
+      }
+      function teamsFromRoster() {
+        const shuffled=shuffle(available()), complete=Math.floor(shuffled.length/3)*3;
+        const teams=[];
+        for(let start=0;start<complete;start+=3) teams.push({id:teams.length+1,members:shuffled.slice(start,start+3)});
+        return {teams,ejected:shuffled.slice(complete),participantCount:shuffled.length};
+      }
+      function makeMini(character) { return `<span class="mini-portrait">${portraitHTML(character)}</span>`; }
+      function renderReel(shuffled) {
+        const reel=$('#rouletteReel');
+        const choices=shuffle(shuffled).slice(0,3);
+        reel.innerHTML=choices.map(character=>`<div class="reel-person"><span class="reel-initial">${esc(initial(character.name))}</span><span class="reel-name">${esc(character.name)}</span></div>`).join('');
+      }
+      function renderAssembly(teams,ejected,participantCount) {
+        $('#phaseName').textContent='PHASE 01 · SQUAD DRAFT';
+        $('#phaseTitle').textContent='3인 팀 편성 완료';
+        $('#phaseCount').innerHTML=`참가자 <b>${participantCount}명</b><br>${teams.length}팀 생존 준비`;
+        $('#assemblyCount').textContent=`${teams.length} SQUADS / ${participantCount-ejected.length} SURVIVORS`;
+        $('#assemblyTeams').innerHTML=teams.map((team,index)=>`<div class="assembly-team" style="--delay:${Math.min(index,12)*24}ms"><div class="assembly-team-label">TEAM ${String(team.id).padStart(2,'0')}</div><div class="assembly-members">${team.members.map(makeMini).join('')}</div></div>`).join('');
+        $('#ejectedPeople').innerHTML=ejected.length?ejected.map(character=>`<span class="ejected-chip"><span class="mini-portrait">${portraitHTML(character)}</span>${esc(character.name)}</span>`).join(''):'<span class="ejected-chip">남는 인원 없이 팀 편성 완료</span>';
+        bindPortraits($('#assemblyTeams'));bindPortraits($('#ejectedPeople'));
+      }
+      function renderBoardTeam(team) {
+        return `<div class="board-team" data-team-id="${team.id}"><div class="board-team-label">TEAM ${String(team.id).padStart(2,'0')}</div><div class="board-thumbs">${team.members.map(makeMini).join('')}</div><div class="board-team-names">${team.members.map(character=>esc(character.name)).join(' · ')}</div></div>`;
+      }
+      function renderMatchCell(event,index) {
+        const {teamA,teamB,cTeam}=event;
+        const cEntry=cTeam?`<div class="c-entry"><span class="c-letter-chip">C</span><div class="c-team-info"><b>TEAM ${String(cTeam.id).padStart(2,'0')} · 난입 팀</b><div class="c-thumbs">${cTeam.members.map(makeMini).join('')}</div></div></div>`:'';
+        if(event.type==='triple'){
+          return `<article class="match-cell triple-match reveal-in" data-match-index="${index}" style="--delay:${Math.min(index,14)*18}ms"><span class="c-callout">C 난입 · 두 팀 동시 사출</span><div class="match-legend"><b>FINAL THREE</b><span>최종 3팀 생존</span></div><div class="match-teams triple-teams">${event.teams.map(renderBoardTeam).join('')}</div>${cEntry}<div class="board-result">3팀 최종 분기 · 결과 판정 대기</div></article>`;
+        }
+        return `<article class="match-cell reveal-in" data-match-index="${index}" style="--delay:${Math.min(index,14)*18}ms"><span class="c-callout">C 난입 · 두 팀 동시 사출</span><div class="match-teams">${renderBoardTeam(teamA)}<span class="board-vs">VS</span>${renderBoardTeam(teamB)}</div>${cEntry}<div class="board-result">교전 판정 대기</div></article>`;
+      }
+      function renderBracketBoard(events,scale) {
+        const board=$('#bracketBoard');
+        board.dataset.scale=scale;
+        board.innerHTML=events.map((event,index)=>renderMatchCell(event,index)).join('');
+        bindPortraits(board);
+      }
+      async function focusMatchCell(cell) {
+        if(!cell)return;
+        const board=$('#bracketBoard'),viewport=$('.arena-viewport');
+        cell.dataset.previousViewportHeight=viewport.style.minHeight;
+        const initialRect=cell.getBoundingClientRect(),initialView=viewport.getBoundingClientRect();
+        const scale=Math.max(1,Math.min(1.8,initialView.width*.88/initialRect.width));
+        viewport.style.minHeight=`${Math.max(viewport.clientHeight,Math.ceil(initialRect.height*scale+32))}px`;
+        const rect=cell.getBoundingClientRect(),view=viewport.getBoundingClientRect();
+        const dx=view.left+view.width/2-(rect.left+rect.width/2);
+        const dy=view.top+view.height/2-(rect.top+rect.height/2);
+        cell.classList.remove('reveal-in');
+        board.classList.add('is-focusing');
+        cell.classList.add('focus-battle');
+        cell.style.transform=`translate3d(${dx}px,${dy}px,0) scale(${scale})`;
+        await waitDuringRound(560,120);
+      }
+      async function returnMatchCell(cell) {
+        if(!cell)return;
+        cell.style.transform='translate3d(0,0,0) scale(1)';
+        await waitDuringRound(560,100);
+        cell.classList.remove('focus-battle');
+        $('#bracketBoard').classList.remove('is-focusing');
+        cell.style.transform='';
+        $('.arena-viewport').style.minHeight=cell.dataset.previousViewportHeight||'';
+        delete cell.dataset.previousViewportHeight;
+      }
+      function resolveBoardMatch(cell,event) {
+        cell.classList.add('resolved');
+        const teams=$$('[data-team-id]',cell);
+        if(event.type==='triple'){
+          if(event.outcome.type==='c'){
+            cell.classList.add('c-event','has-c');
+            teams.forEach(team=>team.classList.add(Number(team.dataset.teamId)===event.cTeam.id?'advances':'ejected'));
+            const cEntry=$('.c-entry',cell);if(cEntry)cEntry.classList.add('advances');
+            $('.board-result',cell).textContent=`C 난입 · TEAM ${String(event.cTeam.id).padStart(2,'0')} 생존 · 두 팀 동시 사출`;
+          }else{
+            teams.forEach(team=>{
+              const id=Number(team.dataset.teamId);
+              if(id===event.escapeTeam.id)team.classList.add('advances','escaped');
+              else team.classList.add(id===event.outcome.winner.id?'advances':'ejected');
+            });
+            $('.board-result',cell).textContent=`TEAM ${String(event.escapeTeam.id).padStart(2,'0')} 탈출 · TEAM ${String(event.outcome.winner.id).padStart(2,'0')} 생존 · TEAM ${String(event.outcome.loser.id).padStart(2,'0')} 사출`;
+          }
+          return;
+        }
+        if(event.outcome.type==='c'){
+          cell.classList.add('c-event','has-c');
+          teams.forEach(team=>team.classList.add('ejected'));
+          const cEntry=$('.c-entry',cell);if(cEntry)cEntry.classList.add('advances');
+          $('.board-result',cell).textContent=`C 발동 · 두 팀 동시 사출 · TEAM ${String(event.cTeam.id).padStart(2,'0')} 단독 진출`;
+          return;
+        }
+        teams.forEach(team=>team.classList.add(Number(team.dataset.teamId)===event.outcome.winner.id?'advances':'ejected'));
+        $('.board-result',cell).textContent=`TEAM ${String(event.outcome.winner.id).padStart(2,'0')} 생존 · TEAM ${String(event.outcome.loser.id).padStart(2,'0')} 사출`;
+      }
+      function appendLog(html,kind='') {
+        const log=$('#battleLog');
+        const row=document.createElement('div');row.className=`battle-log-row ${kind}`;row.innerHTML=html;log.append(row);log.scrollTop=log.scrollHeight;
+      }
+      function battlePair(teamA,teamB) {
+        const winner=Math.random()<.5?teamA:teamB,loser=winner===teamA?teamB:teamA;
+        return {winner,loser,type:'normal',teamA,teamB};
+      }
+      async function playTournament(initialTeams) {
+        let active=[...initialTeams],roundNo=1,cAttacks=0,escapes=0;
+        while(active.length>1){
+          const next=[],roundEvents=[];
+          if(active.length===3){
+            const [teamA,teamB,cTeam]=active;
+            if(Math.random()<THREE_TEAM_C_CHANCE){
+              const outcome={type:'c',winner:cTeam,loser:null,teamA,teamB};
+              roundEvents.push({type:'triple',teams:active,teamA,teamB,cTeam,outcome});
+              next.push(cTeam);cAttacks++;
+            }else{
+              const escapeTeam=active[Math.floor(Math.random()*active.length)];
+              const duelTeams=active.filter(team=>team.id!==escapeTeam.id);
+              const duel=battlePair(duelTeams[0],duelTeams[1]);
+              const outcome={type:'escape',escapeTeam,winner:duel.winner,loser:duel.loser,teamA:duel.teamA,teamB:duel.teamB};
+              roundEvents.push({type:'triple',teams:active,teamA:duel.teamA,teamB:duel.teamB,escapeTeam,outcome});
+              next.push(escapeTeam,duel.winner);escapes++;
+            }
+          }else{
+            const hasC=active.length%2===1;
+            const cTeam=hasC?active[active.length-1]:null;
+            const pairedTeams=hasC?active.slice(0,-1):active;
+            const cTargetIndex=cTeam?pairedTeams.length-2:-1;
+            for(let index=0;index<pairedTeams.length;index+=2){
+              const teamA=pairedTeams[index],teamB=pairedTeams[index+1];
+              if(cTeam&&index===cTargetIndex){
+                const outcome={type:'c',winner:cTeam,loser:null,teamA,teamB};
+                roundEvents.push({teamA,teamB,cTeam,outcome});next.push(cTeam);cAttacks++;
+              }else{
+                const outcome=battlePair(teamA,teamB);
+                roundEvents.push({teamA,teamB,cTeam:null,outcome});next.push(outcome.winner);
+              }
+            }
+          }
+          if(roundEvents.length===0)break;
+          roundSkipRequested=false;
+          $('#skipRoundButton').hidden=false;
+          $('#battleProgress').style.width='0%';
+          $('#arenaRound').textContent=`ROUND ${String(roundNo).padStart(2,'0')}`;
+          $('#arenaTeamsLeft').textContent=active.length===3?'생존 팀 3 · 최종 분기':`생존 팀 ${active.length} · 이번 라운드 ${roundEvents.length}경기`;
+          $('#phaseName').textContent=`PHASE 02 · TOURNAMENT ROUND ${String(roundNo).padStart(2,'0')}`;
+          $('#phaseTitle').textContent=active.length===3?'최종 3팀, 탈출과 C의 갈림길':'모든 팀이 한 화면에서 맞붙습니다';
+          $('#phaseCount').innerHTML=active.length===3?`현재 생존 <b>3팀</b><br>C 난입 / 한 팀 탈출 <b>각 50%</b>`:`현재 생존 <b>${active.length}팀</b><br>사출된 팀은 다시 참가하지 않습니다`;
+          $('#battleAnnouncement').textContent='각 경기의 진행 버튼을 누르면 결과가 공개되고 다음 경기가 이어집니다.';
+          $('#phaseStatus').textContent=`ROUND ${String(roundNo).padStart(2,'0')} · ${roundEvents.length}개 교전 준비`;
+          const scale=active.length===3?'final':active.length>=20?'wide':active.length>=8?'mid':active.length>=3?'close':'final';
+          renderBracketBoard(roundEvents,scale);
+          $('#simFootNote').textContent='라운드 스킵 버튼으로 남은 결과를 빠르게 공개할 수 있어요.';
+          await waitDuringRound(ROUND_BOARD_SETTLE_MS,100);
+          for(let index=0;index<roundEvents.length;index++){
+            const event=roundEvents[index],cell=$(`[data-match-index="${index}"]`,$('#bracketBoard'));
+            const {teamA,teamB,outcome}=event;
+            const stepName=event.type==='triple'?'3팀 최종 결과 공개':`${index+1}경기 결과 공개`;
+            const stepStatus=`ROUND ${String(roundNo).padStart(2,'0')} · ${index+1}/${roundEvents.length}경기 대기`;
+            if(!roundSkipRequested){
+              $('#phaseStatus').textContent=`ROUND ${String(roundNo).padStart(2,'0')} · ${event.type==='triple'?'최종 3팀 중앙 집중':`${index+1}경기 중앙 교전`}`;
+              $('#battleAnnouncement').innerHTML=event.type==='triple'?'세 팀의 마지막 운명이 결정됩니다.':`<b>TEAM ${String(teamA.id).padStart(2,'0')}</b> VS <b>TEAM ${String(teamB.id).padStart(2,'0')}</b> · 교전 준비`;
+              await focusMatchCell(cell);
+              if(!roundSkipRequested){
+                $('#battleAnnouncement').innerHTML=event.type==='triple'?'진행 버튼을 누르면 세 팀의 최종 결과를 공개합니다.':`진행 버튼을 누르면 <b>TEAM ${String(teamA.id).padStart(2,'0')}</b>과 <b>TEAM ${String(teamB.id).padStart(2,'0')}</b>의 결과를 공개합니다.`;
+                await waitForAdvance(stepName,stepStatus);
+              }
+            }
+            $('#phaseStatus').textContent=`ROUND ${String(roundNo).padStart(2,'0')} · ${index+1}경기 결과 공개`;
+            $('#battleAnnouncement').innerHTML=event.type==='triple'?'최종 3팀의 결과를 공개합니다…':`<b>TEAM ${String(teamA.id).padStart(2,'0')}</b> VS <b>TEAM ${String(teamB.id).padStart(2,'0')}</b> · 결과 판정 중…`;
+            if(event.type==='triple'&&outcome.type==='escape'){
+              const escapeNode=$(`[data-team-id="${event.escapeTeam.id}"]`,cell);
+              if(escapeNode)escapeNode.classList.add('escaped');
+              $('.board-result',cell).textContent=`TEAM ${String(event.escapeTeam.id).padStart(2,'0')} 탈출 · 남은 두 팀 교전 중`;
+              $('#battleAnnouncement').innerHTML=`<b>TEAM ${String(event.escapeTeam.id).padStart(2,'0')}</b> 탈출 성공 · 남은 두 팀이 정상적으로 겨룹니다.`;
+              await waitDuringRound(420,120);
+            }
+            if(outcome.type==='c'){
+              const apparentWinner=Math.random()<.5?teamA:teamB,apparentLoser=apparentWinner===teamA?teamB:teamA;
+              cell.classList.add('resolved','c-tease');
+              $$('[data-team-id]',cell).forEach(team=>{
+                const id=Number(team.dataset.teamId);
+                if(id===apparentWinner.id)team.classList.add('tease-winner');
+                else if(id===apparentLoser.id)team.classList.add('tease-loser');
+              });
+              $('.board-result',cell).textContent=`TEAM ${String(apparentWinner.id).padStart(2,'0')} 생존 · TEAM ${String(apparentLoser.id).padStart(2,'0')} 사출`;
+              $('#battleAnnouncement').innerHTML=`<b>TEAM ${String(apparentWinner.id).padStart(2,'0')}</b> 생존 · TEAM ${String(apparentLoser.id).padStart(2,'0')} 사출`;
+              await waitDuringRound(MATCH_REVEAL_MS,140);
+              cell.classList.remove('resolved','c-tease');
+              $$('[data-team-id]',cell).forEach(team=>team.classList.remove('tease-winner','tease-loser'));
+              $('.board-result',cell).textContent='교전 판정 중…';
+              $('#battleAnnouncement').innerHTML='…결과가 뒤집힙니다.';
+              await waitDuringRound(220,70);
+            }
+            if(cell)resolveBoardMatch(cell,event);
+            $('#battleProgress').style.width=`${Math.round((index+1)/roundEvents.length*100)}%`;
+            if(outcome.type==='c'){
+              $('#battleAnnouncement').innerHTML=`<b>Ｃ 난입!</b> TEAM ${String(event.cTeam.id).padStart(2,'0')}이 TEAM ${String(teamA.id).padStart(2,'0')} · ${String(teamB.id).padStart(2,'0')}을 동시에 사출합니다.`;
+              $('#phaseStatus').textContent=`ROUND ${String(roundNo).padStart(2,'0')} · C 발동`;
+              appendLog(`<span class="log-round">R${roundNo}</span><span class="log-copy"><b>TEAM ${String(event.cTeam.id).padStart(2,'0')} C 발동</b> · TEAM ${String(teamA.id).padStart(2,'0')} + ${String(teamB.id).padStart(2,'0')} 동시 사출</span><span class="log-result">C ATTACK</span>`,'c-event');
+              await waitDuringRound(C_REVEAL_MS,380);
+            }else if(outcome.type==='escape'){
+              $('#battleAnnouncement').innerHTML=`<b>TEAM ${String(outcome.escapeTeam.id).padStart(2,'0')}</b> 탈출 · <b>TEAM ${String(outcome.winner.id).padStart(2,'0')}</b> 생존 · TEAM ${String(outcome.loser.id).padStart(2,'0')} 사출`;
+              appendLog(`<span class="log-round">R${roundNo}</span><span class="log-copy"><b>TEAM ${String(outcome.escapeTeam.id).padStart(2,'0')}</b> 탈출 성공</span><span class="log-result">ESCAPE</span>`,'escape');
+              appendLog(`<span class="log-round">R${roundNo}</span><span class="log-copy"><b>TEAM ${String(outcome.winner.id).padStart(2,'0')}</b> 생존 · TEAM ${String(outcome.loser.id).padStart(2,'0')} 사출</span><span class="log-result">ADVANCE</span>`);
+              await waitDuringRound(MATCH_REVEAL_MS,140);
+            }else{
+              $('#battleAnnouncement').innerHTML=`<b>TEAM ${String(outcome.winner.id).padStart(2,'0')}</b> 생존 · TEAM ${String(outcome.loser.id).padStart(2,'0')} 사출`;
+              appendLog(`<span class="log-round">R${roundNo}</span><span class="log-copy"><b>TEAM ${String(outcome.winner.id).padStart(2,'0')}</b> 생존 · TEAM ${String(outcome.loser.id).padStart(2,'0')} 사출</span><span class="log-result">ADVANCE</span>`);
+              await waitDuringRound(MATCH_REVEAL_MS,140);
+            }
+            if(cell.classList.contains('focus-battle'))await returnMatchCell(cell);
+          }
+          $('#skipRoundButton').hidden=true;
+          roundSkipRequested=false;
+          $('#simFootNote').textContent='진행 버튼으로 한 단계씩 이동합니다.';
+          $('#battleAnnouncement').innerHTML=`라운드 종료 · <b>${next.length}팀</b>이 다음 라운드에 진출합니다.`;
+          if(next.length>1){
+            await waitForAdvance('다음 라운드',`ROUND ${String(roundNo).padStart(2,'0')} 종료 · 진행 버튼을 눌러 다음 라운드로 이동합니다.`);
+          }
+          active=next;roundNo++;
+        }
+        $('#skipRoundButton').hidden=true;
+        return {winner:active[0],rounds:roundNo-1,escapes,cAttacks};
+      }
+      async function renderChampion(winner,mvp,stats,participantCount,ejectedCount) {
+        $('#phaseName').textContent='PHASE 03 · FINAL MVP';
+        $('#phaseTitle').textContent='최종 팀 3명이 MVP 자리를 두고 섞입니다';
+        $('#phaseCount').innerHTML=`마지막 후보 <b>3명</b><br>중앙 MVP 추첨 중`;
+        $('#championSub').textContent=`${winner.members.map(character=>character.name).join(' · ')} 팀이 우승했습니다. 누가 오늘의 MVP가 될까요?`;
+        const championTeam=$('#championTeam');
+        championTeam.className='champion-team mixing';
+        championTeam.innerHTML=shuffle(winner.members).map((character,index)=>`<article class="champion-member candidate" style="--delay:${index*110}ms">${portraitHTML(character)}<div class="champion-info"><small>MVP 후보 · ${index+1}</small><b>${esc(character.name)}</b></div></article>`).join('');
+        $('#championPanel').hidden=false;
+        bindPortraits(championTeam);
+        $('#phaseStatus').textContent=`우승 팀 TEAM ${String(winner.id).padStart(2,'0')} · 최종 MVP 추첨`;
+        $('#finalCallout').textContent='세 후보가 섞이는 중입니다. 진행 버튼을 눌러 MVP를 공개하세요.';
+        await waitForAdvance('MVP 공개','세 후보의 움직임을 확인한 뒤 진행 버튼을 눌러 MVP를 공개하세요.');
+        await wait(480);
+        const sides=winner.members.filter(character=>character.id!==mvp.id);
+        const finalists=[sides[0],mvp,sides[1]];
+        championTeam.className='champion-team revealed';
+        championTeam.innerHTML=finalists.map((character,index)=>`<article class="champion-member${character.id===mvp.id?' mvp':''}" style="--delay:${index*80}ms">${portraitHTML(character)}${character.id===mvp.id?'<span class="mvp-ribbon">★ TODAY\'S MVP ★</span>':''}<div class="champion-info"><small>${character.id===mvp.id?'★ MVP · 당첨':'FINAL SQUAD'}</small><b>${esc(character.name)}</b></div></article>`).join('');
+        bindPortraits(championTeam);
+        $('#phaseTitle').textContent=`${mvp.name}, 오늘의 최종 MVP!`;
+        $('#phaseCount').innerHTML=`당첨 실험체 <b>${esc(mvp.name)}</b><br>${stats.rounds}라운드 생존`;
+        $('#championSub').textContent=`${mvp.name}이(가) 오늘의 당첨 캐릭터로 중앙에 섰습니다.`;
+        $('#finalCallout').innerHTML=`<b>${esc(mvp.name)}</b> 실험체가 오늘의 당첨 캐릭터입니다.<br>참가 ${participantCount}명 · 팀 미구성 사출 ${ejectedCount}명 · 최종 3팀 탈출 ${stats.escapes}회 · C 난입 ${stats.cAttacks}회`;
+        $('#phaseStatus').textContent=`우승 팀 TEAM ${String(winner.id).padStart(2,'0')} · MVP ${mvp.name} 당첨`;
+        $('#finishButton').hidden=false;
+        $('#closeSimulation').disabled=false;
+        $('#simFootNote').textContent='MVP 선정 완료';
+      }
+      async function startSimulation() {
+        if(running)return;
+        const pool=available();
+        if(pool.length<3){toast('팀 편성을 위해 참가 실험체가 3명 이상 필요해요.');return;}
+        running=true;updateCounts();
+        const {teams,ejected,participantCount}=teamsFromRoster();
+        const overlay=$('#simOverlay');overlay.classList.add('open');document.body.style.overflow='hidden';
+        $('#assemblyPanel').hidden=false;$('#arenaPanel').hidden=true;$('#championPanel').hidden=true;$('#advanceButton').hidden=true;$('#advanceButton').disabled=true;$('#skipRoundButton').hidden=true;$('#finishButton').hidden=true;advanceResolver=null;roundSkipRequested=false;
+        $('#battleLog').innerHTML='';$('#battleProgress').style.width='0%';$('#closeSimulation').disabled=true;
+        $('#phaseName').textContent='PHASE 01 · SQUAD DRAFT';$('#phaseTitle').textContent='실험체를 팀으로 편성합니다';
+        $('#phaseCount').innerHTML=`참가자 <b>${participantCount}명</b><br>랜덤 편성 진행 중`;
+        $('#phaseStatus').textContent='참가 실험체를 빠르게 섞고 있습니다';$('#simFootNote').textContent='진행 버튼으로 한 단계씩 이동합니다.';
+        $('#assemblyTeams').innerHTML='';$('#ejectedPeople').innerHTML='';$('#assemblyCount').textContent='SHUFFLING…';
+        let reelIndex=0;
+        const ticker=setInterval(()=>{renderReel(shuffle(pool).slice(0,3));reelIndex++;},105);
+        bindPortraits($('#rouletteReel'));
+        await wait(880);clearInterval(ticker);
+        renderAssembly(teams,ejected,participantCount);
+        $('#phaseTitle').textContent=`${teams.length}개 팀 구성 완료`;
+        $('#phaseCount').innerHTML=`참가자 <b>${participantCount}명</b><br>${ejected.length}명 팀 미구성 사출`;
+        $('#phaseStatus').textContent=`${teams.length}개 3인 팀 편성 · 진행 버튼을 눌러 토너먼트를 시작하세요.`;
+        await waitForAdvance('토너먼트 시작',`${teams.length}팀 편성 완료 · 진행 버튼을 누르면 토너먼트가 시작됩니다.`);
+        $('#assemblyPanel').hidden=true;$('#arenaPanel').hidden=false;
+        const stats=await playTournament(teams);
+        const mvp=stats.winner.members[Math.floor(Math.random()*stats.winner.members.length)];
+        $('#arenaPanel').hidden=true;
+        await renderChampion(stats.winner,mvp,stats,participantCount,ejected.length);
+        const record=[Date.now(),mvp.id,stats.winner.members.map(character=>character.id),teams.length,stats.rounds,ejected.length,0,stats.cAttacks,stats.escapes];
+        state.history.unshift(record);state.history=state.history.slice(0,MAX_HISTORY);state.runs++;
+        saveState();updateCounts();renderHistory();
+        running=false;updateCounts();
+      }
+      function closeSimulation() {
+        if(running)return;
+        $('#simOverlay').classList.remove('open');document.body.style.overflow='';
+        if(activePage==='history')renderHistory();
+      }
+      function clearHistory() {
+        if(!state.history.length){toast('초기화할 기록이 없습니다.');return;}
+        if(!window.confirm('저장된 뽑기 기록을 모두 지울까요? 캐릭터 제외 설정은 유지됩니다.'))return;
+        state.history=[];state.runs=0;saveState();renderHistory();updateCounts();toast('뽑기 기록을 초기화했어요.');
+      }
+
+      loadState();
+      renderFocusPicker();
+      renderHeroPortrait();
+      renderRoster();renderHistory();updateCounts();
+      $$('.nav-button').forEach(button=>button.addEventListener('click',()=>setPage(button.dataset.view)));
+      $$('[data-view-link]').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();setPage(link.dataset.viewLink);}));
+      $('#rosterSearch').addEventListener('input',renderRoster);
+      $('#heroFocusSelect').addEventListener('change',event=>{
+        const value=event.target.value;
+        state.focusId=value===''?null:Number(value);
+        saveState();renderHeroPortrait();renderRoster();
+        toast(state.focusId===null?'집중 캐릭터 설정을 해제했어요.':`${subject(state.focusId).name}을(를) 집중 표시합니다.`);
+      });
+      $('#includeAll').addEventListener('click',()=>{state.excluded.clear();saveState();renderRoster();updateCounts();toast('전체 실험체를 다시 참가시켰어요.');});
+      $('#excludeAll').addEventListener('click',()=>{if(!window.confirm('모든 실험체를 뽑기에서 제외할까요?'))return;state.excluded=new Set(roster.map(character=>character.id));saveState();renderRoster();updateCounts();toast('전체 실험체를 제외했어요.');});
+      $('#startRoulette').addEventListener('click',startSimulation);
+      $('#advanceButton').addEventListener('click',advanceCurrentStage);
+      $('#skipRoundButton').addEventListener('click',skipCurrentRound);
+      $('#closeSimulation').addEventListener('click',closeSimulation);
+      $('#finishButton').addEventListener('click',closeSimulation);
+      $('#simOverlay').addEventListener('click',event=>{if(event.target===$('#simOverlay'))closeSimulation();});
+      $('#clearHistory').addEventListener('click',clearHistory);
+      window.addEventListener('keydown',event=>{if(event.key==='Escape'&&!running&&$('#simOverlay').classList.contains('open'))closeSimulation();});
+    })();
+  </script>
+</body>
+</html>
