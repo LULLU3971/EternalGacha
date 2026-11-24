@@ -29,6 +29,7 @@
       --sans: 'Manrope', 'Noto Sans KR', sans-serif;
     }
     * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
     html { scroll-behavior: smooth; }
     body {
       margin: 0; min-width: 320px; color: var(--text); font-family: var(--sans); letter-spacing: -.025em;
@@ -92,6 +93,18 @@
     .stat-copy small { display: block; color: var(--dim); font: 8px var(--mono); letter-spacing: .08em; }
     .stat-copy strong { display: block; margin-top: 5px; color: #eff4f2; font: 600 17px var(--mono); }
     .stat-copy strong span { margin-left: 4px; color: #88999f; font-size: 9px; font-weight: 400; }
+    .dak-streak-card { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px 22px; margin-top: 13px; padding: 16px 18px; border: 1px solid rgba(214,250,120,.18); border-radius: 10px; background: linear-gradient(110deg,rgba(214,250,120,.055),rgba(23,30,38,.88) 42%); }
+    .dak-streak-copy h2 { margin: 6px 0 0; color: #e8efeb; font-size: 13px; }
+    .dak-streak-copy p { margin: 6px 0 0; color: #91a1a5; font-size: 9px; line-height: 1.6; }
+    .dak-streak-actions { display: flex; align-items: center; gap: 12px; }
+    .dak-streak-actions a { color: #a5c1b3; font-size: 9px; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+    .dak-streak-button { min-height: 36px; }
+    .dak-streak-result { grid-column: 1/-1; display: flex; align-items: center; gap: 14px; min-height: 48px; padding: 9px 11px; border: 1px solid rgba(224,237,244,.08); border-radius: 7px; background: rgba(6,12,15,.3); }
+    .dak-streak-picked { color: #9bacb1; font-size: 9px; }
+    .dak-streak-picked b { margin-left: 5px; color: var(--lime); font-weight: 700; }
+    .dak-streak-value { color: #eef6da; font: 700 21px var(--mono); white-space: nowrap; }
+    .dak-streak-value span { margin-left: 5px; color: #9bab9d; font: 9px var(--sans); }
+    .dak-streak-message { color: #8fa0a4; font-size: 9px; line-height: 1.5; }
     .home-bottom { display: grid; grid-template-columns: 1.15fr .85fr; gap: 13px; margin-top: 13px; }
     .info-card { min-height: 150px; padding: 18px; border: 1px solid var(--line); border-radius: 10px; background: rgba(23,30,38,.74); }
     .info-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -167,16 +180,16 @@
     .history-empty { grid-column: 1/-1; min-height: 270px; display: grid; place-items: center; border: 1px dashed var(--line-2); border-radius: 10px; color: #829197; text-align: center; font-size: 10px; line-height: 1.9; }
     .history-empty i { display: block; margin-bottom: 10px; color: #a3b4b6; font-size: 25px; font-style: normal; }
     .history-actions { display: flex; align-items: center; gap: 8px; }
-    .overlay { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(5,9,12,.82); backdrop-filter: blur(12px); }
+    .overlay { position: fixed; inset: 0; z-index: 50; display: none; align-items: stretch; justify-content: stretch; padding: 0; background: rgba(5,9,12,.82); backdrop-filter: blur(12px); }
     .overlay.open { display: flex; animation: overlay-in .2s ease both; }
     @keyframes overlay-in { from { opacity: 0; } to { opacity: 1; } }
-    .sim-window { width: min(1020px,100%); max-height: min(92vh,900px); display: flex; flex-direction: column; overflow: hidden; border: 1px solid rgba(196,227,215,.2); border-radius: 14px; background: linear-gradient(150deg,#18222b,#111920); box-shadow: 0 35px 100px rgba(0,0,0,.55); }
+    .sim-window { width: 100vw; height: 100vh; height: 100dvh; max-height: 100vh; max-height: 100dvh; display: flex; flex-direction: column; overflow: hidden; border: 0; border-radius: 0; background: linear-gradient(150deg,#18222b,#111920); box-shadow: none; }
     .sim-header { min-height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; border-bottom: 1px solid var(--line); }
     .sim-brand { display: flex; align-items: center; gap: 9px; color: #e5eeeb; font: 500 9px var(--mono); letter-spacing: .1em; }
     .sim-brand i { width: 7px; height: 7px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 12px var(--lime); }
     .sim-close { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: #c5d0d2; font-size: 17px; cursor: pointer; }
     .sim-close:disabled { opacity: .35; cursor: wait; }
-    .sim-scroll { overflow: auto; padding: 19px; scrollbar-color: #394952 transparent; scrollbar-width: thin; }
+    .sim-scroll { flex: 1 1 auto; min-height: 0; overflow: auto; padding: clamp(14px,2vw,28px); scrollbar-color: #394952 transparent; scrollbar-width: thin; }
     .phase-top { display: flex; align-items: end; justify-content: space-between; gap: 15px; margin-bottom: 15px; }
     .phase-name { color: var(--mint); font: 500 8px var(--mono); letter-spacing: .14em; }
     .phase-top h2 { margin: 5px 0 0; font-size: 20px; letter-spacing: -.05em; }
@@ -211,9 +224,9 @@
     .arena-topline { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
     .arena-topline strong { color: #d3dfdc; font: 500 9px var(--mono); }
     .arena-topline span { color: var(--dim); font: 8px var(--mono); }
-    .arena-viewport { position: relative; overflow: hidden; min-height: 120px; padding: 8px; border: 1px solid rgba(224,237,244,.1); border-radius: 8px; background: radial-gradient(ellipse at 50%,rgba(128,162,134,.1),transparent 60%),linear-gradient(120deg,rgba(27,37,43,.88),rgba(20,26,32,.94)); }
-    .bracket-board { display: grid; align-items: stretch; gap: 7px; transform-origin: 50% 50%; animation: board-zoom .45s cubic-bezier(.2,.7,.2,1) both; }
-    .bracket-board[data-scale="wide"] { grid-template-columns: repeat(5,minmax(0,1fr)); }
+    .arena-viewport { position: relative; display: flex; align-items: center; overflow: hidden; min-height: clamp(320px,42vh,620px); padding: clamp(8px,1.1vw,16px); border: 1px solid rgba(224,237,244,.1); border-radius: 8px; background: radial-gradient(ellipse at 50%,rgba(128,162,134,.1),transparent 60%),linear-gradient(120deg,rgba(27,37,43,.88),rgba(20,26,32,.94)); }
+    .bracket-board { width: 100%; display: grid; align-items: stretch; gap: 7px; transform-origin: 50% 50%; animation: board-zoom .45s cubic-bezier(.2,.7,.2,1) both; }
+    .bracket-board[data-scale="wide"] { grid-template-columns: repeat(auto-fit,minmax(min(100%,245px),1fr)); grid-auto-rows: minmax(132px,1fr); }
     .bracket-board[data-scale="mid"] { grid-template-columns: repeat(4,minmax(0,1fr)); }
     .bracket-board[data-scale="close"] { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; padding: 4px 7%; }
     .bracket-board[data-scale="final"] { grid-template-columns: minmax(0,560px); justify-content: center; gap: 14px; padding: 10px 12%; }
@@ -275,7 +288,13 @@
     @keyframes c-letter { 0% { opacity: 0; transform: translate(-50%,-57%) scale(2.6) rotate(-25deg); } 26% { opacity: 1; } 100% { opacity: .93; transform: translate(-50%,-57%) scale(1) rotate(-8deg); } }
     @keyframes c-wave { from { transform: scale(.35); opacity: 1; } to { transform: scale(1.15); opacity: 0; } }
     .c-entry { display: none; position: relative; align-items: center; justify-content: center; gap: 5px; margin-top: 5px; padding: 4px; border: 1px solid rgba(214,250,120,.3); border-radius: 5px; background: rgba(214,250,120,.08); }
+    .c-safe-entry { display: none; align-items: center; justify-content: center; gap: 5px; margin-top: 4px; padding: 3px 5px; border: 1px solid rgba(139,202,255,.28); border-radius: 5px; background: rgba(139,202,255,.07); color: #b7dcfb; font: 6px var(--mono); }
+    .c-safe-entry .mini-portrait { width: 18px; border-radius: 3px; }
     .match-cell.has-c .c-entry { display: flex; }
+    .match-cell.has-c .c-safe-entry { display: flex; }
+    .match-cell.bye-match { display: flex; flex-direction: column; justify-content: center; border-color: rgba(139,202,255,.24); background: radial-gradient(circle at 50%,rgba(139,202,255,.1),transparent 62%),rgba(10,16,21,.7); }
+    .match-cell.bye-match .board-team { max-width: 170px; margin: 0 auto; }
+    .match-cell.bye-match .board-result { color: var(--blue); }
     .c-letter-chip { flex: 0 0 auto; color: var(--lime); font: 900 18px/.9 var(--sans); text-shadow: 0 0 10px rgba(214,250,120,.9); }
     .c-team-info { min-width: 0; color: #dff1ae; font: 6px var(--mono); text-align: left; }
     .c-team-info b { display: block; margin-bottom: 2px; color: var(--lime); font-size: 7px; }
@@ -356,7 +375,7 @@
       .home-hero { grid-template-columns: 1fr .72fr; }
       .hero-copy { padding: 29px; }
       .team-grid { grid-template-columns: repeat(4,minmax(0,1fr)); }
-      .bracket-board[data-scale="wide"] { grid-template-columns: repeat(4,minmax(0,1fr)); }
+      .bracket-board[data-scale="wide"] { grid-template-columns: repeat(auto-fit,minmax(min(100%,230px),1fr)); }
     }
     @media (max-width: 700px) {
       .shell { width: calc(100% - 28px); }
@@ -386,16 +405,20 @@
       .search { width: 100%; flex: 1 1 100%; }
       .character-grid { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; padding: 9px; }
       .history-grid { grid-template-columns: 1fr; }
-      .overlay { padding: 9px; }
-      .sim-window { max-height: 96vh; }
+      .overlay { padding: 0; }
+      .sim-window { width: 100vw; height: 100vh; height: 100dvh; max-height: 100vh; max-height: 100dvh; }
       .sim-scroll { padding: 12px; }
       .phase-top h2 { font-size: 17px; }
       .team-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
-      .bracket-board[data-scale="wide"] { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 5px; }
+      .bracket-board[data-scale="wide"] { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px; }
       .bracket-board[data-scale="mid"] { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
       .bracket-board[data-scale="close"] { grid-template-columns: repeat(2,minmax(0,1fr)); padding: 2px; gap: 7px; }
       .bracket-board[data-scale="final"] { grid-template-columns: minmax(0,1fr); padding: 2px; }
-      .arena-viewport { padding: 5px; }
+      .arena-viewport { min-height: 40vh; padding: 5px; }
+      .dak-streak-card { grid-template-columns: 1fr; gap: 10px; padding: 13px; }
+      .dak-streak-actions { justify-content: space-between; flex-wrap: wrap; }
+      .dak-streak-result { align-items: flex-start; flex-wrap: wrap; gap: 8px 12px; }
+      .dak-streak-message { flex-basis: 100%; }
       .match-cell { min-height: 104px; padding: 4px; }
       .board-team-names { font-size: 5px; }
       .c-team-info { font-size: 5px; }
@@ -468,6 +491,22 @@
           <div class="stat-card"><span class="stat-icon">▤</span><div class="stat-copy"><small>3-PERSON SQUADS</small><strong id="homeTeams">30<span>팀 구성 예정</span></strong></div></div>
           <div class="stat-card"><span class="stat-icon">↘</span><div class="stat-copy"><small>ROULETTE HISTORY</small><strong id="homeRuns">0<span>회 진행</span></strong></div></div>
         </div>
+        <section class="dak-streak-card" aria-label="우동사리ツ 일반전 연속 픽 조회">
+          <div class="dak-streak-copy">
+            <div class="eyebrow">DAK.GG · GENERAL MATCH RECORD</div>
+            <h2>우동사리ツ 일반전 연속 픽 조회</h2>
+            <p>위의 집중 캐릭터를 고른 뒤 최신 일반전부터 몇 판 연속 사용했는지 확인하세요.</p>
+          </div>
+          <div class="dak-streak-actions">
+            <a href="https://dak.gg/er/players/%EC%9A%B0%EB%8F%99%EC%82%AC%E3%83%AA%E3%83%84/matches?hl=ko&amp;gameMode=NORMAL" target="_blank" rel="noreferrer">DAK 전적 열기 ↗</a>
+            <button class="primary-button dak-streak-button" id="dakStreakButton" disabled>연속 픽 조회</button>
+          </div>
+          <div class="dak-streak-result" aria-live="polite">
+            <div class="dak-streak-picked">집중 캐릭터<b id="dakSelectedCharacter">선택 안 함</b></div>
+            <strong class="dak-streak-value" id="dakStreakValue">—<span>판 연속</span></strong>
+            <span class="dak-streak-message" id="dakStreakMessage">집중 캐릭터를 선택하면 조회할 수 있어요.</span>
+          </div>
+        </section>
         <div class="home-bottom">
           <article class="info-card">
             <div class="info-head"><h2>한 판의 진행 방식</h2><span>TOURNAMENT FLOW</span></div>
@@ -482,7 +521,7 @@
             <div class="info-head"><h2>섬의 변수</h2><span>NO MATCH IS SAFE</span></div>
             <div class="rules-list">
               <div class="rule"><span class="rule-mark">01</span><span>3명으로 묶이지 않는 남은 실험체는 팀 편성 중 <b>사출</b>돼요.</span></div>
-              <div class="rule"><span class="rule-mark">02</span><span>홀수 팀이 남으면 마지막 교전에 C가 난입해 두 팀을 함께 사출시킬 수 있어요.</span></div>
+              <div class="rule"><span class="rule-mark">02</span><span>일반 교전마다 확률로 C가 난입해 두 팀을 사출하고, 난입 팀이 생존할 수 있어요.</span></div>
               <div class="rule"><span class="rule-mark">03</span><span>최종 3팀 라운드에서는 C 난입과 한 팀 탈출이 각각 50% 확률로 결정돼요. 사출된 팀은 재참가하지 않아요.</span></div>
               <div class="rule"><span class="rule-mark">04</span><span>최종 팀의 3명이 섞인 뒤 한 명이 가운데 MVP로 선정돼요.</span></div>
             </div>
@@ -529,7 +568,7 @@
 
         <section class="arena-panel" id="arenaPanel" hidden>
           <div class="arena-topline"><strong id="arenaRound">ROUND 01</strong><span id="arenaTeamsLeft">생존 팀 30</span></div>
-          <div class="match-legend"><span>진행 버튼으로 한 경기씩 공개</span><b>전체 대진 유지 · 현재 경기 중앙 확대</b></div>
+          <div class="match-legend"><span>진행 버튼으로 한 경기씩 공개</span><b>화면 전체 대진 유지 · 현재 경기 중앙 확대</b></div>
           <div class="arena-viewport"><div class="bracket-board" id="bracketBoard" data-scale="wide" aria-live="polite"></div></div>
           <div class="battle-announcement" id="battleAnnouncement">팀 배틀을 준비하고 있습니다.</div>
           <div class="progress-bar"><i id="battleProgress"></i></div>
@@ -562,12 +601,18 @@
         ['펜리르','Fenrir'],['펠릭스','Felix'],['프리야','Priya'],['피오라','Fiora'],['피올로','Piolo'],['하트','Hart'],['헤이즈','Haze'],['헨리','Henry'],['현우','Hyunwoo'],['혜진','Hyejin'],['히스이','Hisui']
       ].map(([name,code],id) => ({id,name,code}));
 
+      const DAK_PLAYER_NAME='우동사리ツ';
+      const DAK_API_ROOT='https://er.dakgg.io/api/v1';
+      const DAK_CHARACTER_IDS={Garnet:76,Nadine:6,Nathapon:34,NiaH:81,Nicky:33,Daniel:37,Darko:74,DebiMarlene:65,Tia:48,Laura:47,Lenox:20,Leni:69,Leon:29,Rozzi:21,Lucia:90,Luke:22,Lenore:75,LiDailin:10,Rio:31,Martina:57,Mai:45,Markus:53,Magnus:4,Mirka:85,Vanya:64,Barbara:26,Bernice:25,Blair:84,Bianca:42,Bihyung:88,Charlotte:73,Seres:91,Celine:43,Xiukai:13,Shoichi:18,Sua:28,Xuelin:82,Sissela:15,Silvia:16,Adela:24,Adriana:17,Adina:52,Arda:66,Abigail:67,Aya:2,Isol:9,Isaac:59,Alex:27,Alonso:68,Jan:35,Estelle:55,Aiden:46,Echion:44,Elena:50,Emma:19,Johann:41,William:32,Yumin:77,Justyna:79,Yuki:11,Irem:61,Eva:36,Istvan:80,Ian:63,Eleven:30,Zahir:5,Jackie:1,Jenny:38,Tsubame:70,Camilo:39,Katja:72,Kala:54,Cathy:23,Kenneth:71,Coraline:87,Craver:89,Chloe:40,Chiara:14,Tazia:60,Theodore:62,Fenrir:86,Felix:49,Priya:51,Fiora:3,Piolo:56,Hart:8,Haze:58,Henry:83,Hyunwoo:7,Hyejin:12,Hisui:78};
+      const DAK_MATCH_LIMIT=300;
+
       const HISTORY_COOKIE = 'lumia_cup_history_v2';
       const PREFS_COOKIE = 'lumia_cup_prefs_v2';
       const MAX_HISTORY = 50;
       const ROUND_BOARD_SETTLE_MS = 460;
       const MATCH_REVEAL_MS = 760;
       const C_REVEAL_MS = 1900;
+      const C_MATCH_CHANCE = .08;
       const THREE_TEAM_C_CHANCE = .5;
       const PORTRAIT_CODE_ALIASES = {NiaH:'Niah',Ian:'Lyanh',Yumin:'YuMin',Kala:'Karla'};
       const state = { excluded:new Set(), history:[], runs:0, focusId:null };
@@ -575,6 +620,9 @@
       let running = false;
       let advanceResolver = null;
       let roundSkipRequested = false;
+      let dakRequestSerial = 0;
+      let dakLoading = false;
+      let dakDisplayedFocusId = null;
       let toastTimer;
       const $ = (selector, parent=document) => parent.querySelector(selector);
       const $$ = (selector, parent=document) => [...parent.querySelectorAll(selector)];
@@ -701,6 +749,95 @@
         picker.innerHTML=`<option value="">선택 안 함</option>${roster.map(character=>`<option value="${character.id}">${esc(character.name)}</option>`).join('')}`;
         picker.value=state.focusId===null?'':String(state.focusId);
         $('#focusPickerHint').textContent=state.focusId===null?'선택한 실험체가 빛나는 테두리로 강조돼요.':`${subject(state.focusId).name} 집중 중 · 우승 팀에서 더 잘 보여요.`;
+        $('#dakSelectedCharacter').textContent=state.focusId===null?'선택 안 함':subject(state.focusId).name;
+        $('#dakStreakButton').disabled=state.focusId===null||dakLoading;
+        if(dakDisplayedFocusId!==state.focusId){
+          dakDisplayedFocusId=state.focusId;
+          dakRequestSerial++;
+          dakLoading=false;
+          $('#dakStreakButton').textContent='연속 픽 조회';
+          $('#dakStreakValue').innerHTML='—<span>판 연속</span>';
+          $('#dakStreakMessage').textContent=state.focusId===null?'집중 캐릭터를 선택하면 조회할 수 있어요.':'DAK.GG에서 최신 일반전 기록을 불러오세요.';
+        }
+      }
+      async function fetchDakMatches(season,page=1) {
+        const params=new URLSearchParams({matchingMode:'NORMAL',teamMode:'ALL',page:String(page)});
+        if(season)params.set('season',season);
+        const url=`${DAK_API_ROOT}/players/${encodeURIComponent(DAK_PLAYER_NAME)}/matches?${params}`;
+        const response=await fetch(url,{headers:{Accept:'application/json'}});
+        if(!response.ok)throw new Error(`DAK.GG ${response.status}`);
+        return response.json();
+      }
+      function dakPastSeasons(currentSeason) {
+        const seasonNumber=Number(String(currentSeason||'').match(/^SEASON_(\d+)$/)?.[1]);
+        if(!Number.isFinite(seasonNumber)||seasonNumber<1)return [];
+        const seasons=[];
+        for(let number=seasonNumber;number>=1;number--){
+          seasons.push(`PRE_SEASON_${number}`);
+          if(number>1)seasons.push(`SEASON_${number-1}`);
+        }
+        return seasons;
+      }
+      async function queryDakStreak(character) {
+        const targetId=DAK_CHARACTER_IDS[character.code];
+        if(!targetId)throw new Error('실험체 ID를 찾을 수 없습니다.');
+        let count=0,processed=0,started=false,truncated=false;
+        const consume=matches=>{
+          for(const match of matches||[]){
+            if(Number(match.characterNum)!==targetId){
+              if(started)return {done:true};
+              return {done:true};
+            }
+            started=true;count++;processed++;
+            if(processed>=DAK_MATCH_LIMIT){truncated=true;return {done:true};}
+          }
+          return {done:false};
+        };
+        async function scanSeason(firstPage,season){
+          let data=firstPage,page=1;
+          while(data){
+            const result=consume(data.matches);
+            if(result.done)return true;
+            const total=Number(data.meta?.count)||0;
+            if(!data.matches?.length||data.matches.length<20||page*20>=total)return false;
+            page++;
+            data=await fetchDakMatches(season,page);
+          }
+          return false;
+        }
+        const currentPage=await fetchDakMatches(null,1);
+        const currentSeason=currentPage.meta?.season;
+        if(!/^SEASON_\d+$/.test(String(currentSeason||'')))throw new Error('현재 시즌 정보를 DAK.GG에서 받지 못했습니다.');
+        if(await scanSeason(currentPage,null))return {count,truncated,currentSeason};
+        for(const season of dakPastSeasons(currentSeason)){
+          if(processed>=DAK_MATCH_LIMIT){truncated=true;break;}
+          const firstPage=await fetchDakMatches(season,1);
+          if(await scanSeason(firstPage,season))break;
+        }
+        return {count,truncated,currentSeason};
+      }
+      async function lookupDakStreak() {
+        if(state.focusId===null){toast('먼저 집중 캐릭터를 선택해주세요.');return;}
+        const requestId=++dakRequestSerial,focusId=state.focusId,character=subject(focusId);
+        dakLoading=true;
+        const button=$('#dakStreakButton');
+        button.disabled=true;button.textContent='전적 조회 중…';
+        $('#dakStreakValue').innerHTML='…<span>확인 중</span>';
+        $('#dakStreakMessage').textContent=`${character.name}의 최신 일반전부터 확인하고 있어요.`;
+        try{
+          const result=await queryDakStreak(character);
+          if(requestId!==dakRequestSerial||focusId!==state.focusId)return;
+          $('#dakStreakValue').innerHTML=`${result.count}${result.truncated?'+':''}<span>판 연속</span>`;
+          $('#dakStreakMessage').textContent=result.truncated?`DAK.GG ${result.currentSeason}부터 최근 ${DAK_MATCH_LIMIT}판을 확인했습니다. 기록은 ${result.count}판 이상입니다.`:result.count?`DAK.GG 최신 일반전부터 ${character.name}을(를) ${result.count}판 연속 사용했습니다.`:`가장 최근 일반전은 ${character.name}이 아닙니다.`;
+        }catch(error){
+          if(requestId!==dakRequestSerial||focusId!==state.focusId)return;
+          $('#dakStreakValue').innerHTML='—<span>조회 실패</span>';
+          $('#dakStreakMessage').textContent='DAK.GG 전적을 불러오지 못했어요. 전적 페이지에서 최신 기록을 확인해주세요.';
+        }finally{
+          if(requestId===dakRequestSerial){
+            dakLoading=false;button.disabled=state.focusId===null;button.textContent='연속 픽 조회';
+          }
+        }
       }
       function renderRoster() {
         const query=$('#rosterSearch').value.trim().toLocaleLowerCase('ko');
@@ -754,7 +891,8 @@
       function renderReel(shuffled) {
         const reel=$('#rouletteReel');
         const choices=shuffle(shuffled).slice(0,3);
-        reel.innerHTML=choices.map(character=>`<div class="reel-person"><span class="reel-initial">${esc(initial(character.name))}</span><span class="reel-name">${esc(character.name)}</span></div>`).join('');
+        reel.innerHTML=choices.map(character=>`<div class="reel-person">${portraitHTML(character)}<span class="reel-name">${esc(character.name)}</span></div>`).join('');
+        bindPortraits(reel);
       }
       function renderAssembly(teams,ejected,participantCount) {
         $('#phaseName').textContent='PHASE 01 · SQUAD DRAFT';
@@ -771,10 +909,14 @@
       function renderMatchCell(event,index) {
         const {teamA,teamB,cTeam}=event;
         const cEntry=cTeam?`<div class="c-entry"><span class="c-letter-chip">C</span><div class="c-team-info"><b>TEAM ${String(cTeam.id).padStart(2,'0')} · 난입 팀</b><div class="c-thumbs">${cTeam.members.map(makeMini).join('')}</div></div></div>`:'';
-        if(event.type==='triple'){
-          return `<article class="match-cell triple-match reveal-in" data-match-index="${index}" style="--delay:${Math.min(index,14)*18}ms"><span class="c-callout">C 난입 · 두 팀 동시 사출</span><div class="match-legend"><b>FINAL THREE</b><span>최종 3팀 생존</span></div><div class="match-teams triple-teams">${event.teams.map(renderBoardTeam).join('')}</div>${cEntry}<div class="board-result">3팀 최종 분기 · 결과 판정 대기</div></article>`;
+        const safeEntry=event.safeTeam?`<div class="c-safe-entry"><b>↗ TEAM ${String(event.safeTeam.id).padStart(2,'0')} 난입 여파 탈출</b>${event.safeTeam.members.map(makeMini).join('')}</div>`:'';
+        if(event.type==='bye'){
+          return `<article class="match-cell bye-match reveal-in" data-match-index="${index}" style="--delay:${Math.min(index,14)*18}ms"><div class="match-legend"><b>SAFE ZONE</b><span>상대 없이 다음 라운드 진출</span></div>${renderBoardTeam(event.safeTeam)}<div class="board-result">생존 팀 · 자동 진출</div></article>`;
         }
-        return `<article class="match-cell reveal-in" data-match-index="${index}" style="--delay:${Math.min(index,14)*18}ms"><span class="c-callout">C 난입 · 두 팀 동시 사출</span><div class="match-teams">${renderBoardTeam(teamA)}<span class="board-vs">VS</span>${renderBoardTeam(teamB)}</div>${cEntry}<div class="board-result">교전 판정 대기</div></article>`;
+        if(event.type==='triple'){
+          return `<article class="match-cell triple-match reveal-in" data-match-index="${index}" style="--delay:${Math.min(index,14)*18}ms"><span class="c-callout">C 난입 · 두 팀 동시 사출</span><div class="match-legend"><b>FINAL THREE</b><span>최종 3팀 생존</span></div><div class="match-teams triple-teams">${event.teams.map(renderBoardTeam).join('')}</div>${cEntry}${safeEntry}<div class="board-result">3팀 최종 분기 · 결과 판정 대기</div></article>`;
+        }
+        return `<article class="match-cell reveal-in" data-match-index="${index}" style="--delay:${Math.min(index,14)*18}ms"><span class="c-callout">C 난입 · 두 팀 동시 사출</span><div class="match-teams">${renderBoardTeam(teamA)}<span class="board-vs">VS</span>${renderBoardTeam(teamB)}</div>${cEntry}${safeEntry}<div class="board-result">교전 판정 대기</div></article>`;
       }
       function renderBracketBoard(events,scale) {
         const board=$('#bracketBoard');
@@ -811,6 +953,12 @@
       function resolveBoardMatch(cell,event) {
         cell.classList.add('resolved');
         const teams=$$('[data-team-id]',cell);
+        if(event.type==='bye'){
+          const team=$(`[data-team-id="${event.safeTeam.id}"]`,cell);
+          if(team)team.classList.add('advances','escaped');
+          $('.board-result',cell).textContent=`TEAM ${String(event.safeTeam.id).padStart(2,'0')} 상대 없이 진출`;
+          return;
+        }
         if(event.type==='triple'){
           if(event.outcome.type==='c'){
             cell.classList.add('c-event','has-c');
@@ -831,7 +979,8 @@
           cell.classList.add('c-event','has-c');
           teams.forEach(team=>team.classList.add('ejected'));
           const cEntry=$('.c-entry',cell);if(cEntry)cEntry.classList.add('advances');
-          $('.board-result',cell).textContent=`C 발동 · 두 팀 동시 사출 · TEAM ${String(event.cTeam.id).padStart(2,'0')} 단독 진출`;
+          const safeEntry=$('.c-safe-entry',cell);if(safeEntry)safeEntry.classList.add('advances','escaped');
+          $('.board-result',cell).textContent=`C 발동 · 두 팀 동시 사출 · TEAM ${String(event.cTeam.id).padStart(2,'0')} 진출${event.safeTeam?` · TEAM ${String(event.safeTeam.id).padStart(2,'0')} 탈출`:''}`;
           return;
         }
         teams.forEach(team=>team.classList.add(Number(team.dataset.teamId)===event.outcome.winner.id?'advances':'ejected'));
@@ -864,19 +1013,33 @@
               next.push(escapeTeam,duel.winner);escapes++;
             }
           }else{
-            const hasC=active.length%2===1;
-            const cTeam=hasC?active[active.length-1]:null;
-            const pairedTeams=hasC?active.slice(0,-1):active;
-            const cTargetIndex=cTeam?pairedTeams.length-2:-1;
-            for(let index=0;index<pairedTeams.length;index+=2){
-              const teamA=pairedTeams[index],teamB=pairedTeams[index+1];
-              if(cTeam&&index===cTargetIndex){
+            const pairs=[];
+            for(let index=0;index+1<active.length;index+=2)pairs.push([active[index],active[index+1]]);
+            const leftover=active.length%2?active[active.length-1]:null;
+            const cCandidates=pairs.length>=2?pairs.map((_,index)=>Math.random()<C_MATCH_CHANCE?index:-1).filter(index=>index>=0):[];
+            const cTargetIndex=cCandidates.length?cCandidates[Math.floor(Math.random()*cCandidates.length)]:-1;
+            let cSourceIndex=-1,cTeam=leftover,safeTeam=null;
+            if(cTargetIndex>=0&&!leftover){
+              const donors=pairs.map((_,index)=>index).filter(index=>index!==cTargetIndex);
+              cSourceIndex=donors[Math.floor(Math.random()*donors.length)];
+              const donorPair=pairs[cSourceIndex];
+              cTeam=donorPair[Math.floor(Math.random()*donorPair.length)];
+              safeTeam=donorPair.find(team=>team.id!==cTeam.id);
+            }
+            for(let index=0;index<pairs.length;index++){
+              if(index===cSourceIndex)continue;
+              const [teamA,teamB]=pairs[index];
+              if(index===cTargetIndex){
                 const outcome={type:'c',winner:cTeam,loser:null,teamA,teamB};
-                roundEvents.push({teamA,teamB,cTeam,outcome});next.push(cTeam);cAttacks++;
+                roundEvents.push({type:'match',teamA,teamB,cTeam,safeTeam,outcome});
+                next.push(cTeam);if(safeTeam)next.push(safeTeam);cAttacks++;
               }else{
                 const outcome=battlePair(teamA,teamB);
-                roundEvents.push({teamA,teamB,cTeam:null,outcome});next.push(outcome.winner);
+                roundEvents.push({type:'match',teamA,teamB,cTeam:null,outcome});next.push(outcome.winner);
               }
+            }
+            if(leftover&&cTargetIndex<0){
+              roundEvents.push({type:'bye',safeTeam:leftover});next.push(leftover);
             }
           }
           if(roundEvents.length===0)break;
@@ -886,8 +1049,8 @@
           $('#arenaRound').textContent=`ROUND ${String(roundNo).padStart(2,'0')}`;
           $('#arenaTeamsLeft').textContent=active.length===3?'생존 팀 3 · 최종 분기':`생존 팀 ${active.length} · 이번 라운드 ${roundEvents.length}경기`;
           $('#phaseName').textContent=`PHASE 02 · TOURNAMENT ROUND ${String(roundNo).padStart(2,'0')}`;
-          $('#phaseTitle').textContent=active.length===3?'최종 3팀, 탈출과 C의 갈림길':'모든 팀이 한 화면에서 맞붙습니다';
-          $('#phaseCount').innerHTML=active.length===3?`현재 생존 <b>3팀</b><br>C 난입 / 한 팀 탈출 <b>각 50%</b>`:`현재 생존 <b>${active.length}팀</b><br>사출된 팀은 다시 참가하지 않습니다`;
+          $('#phaseTitle').textContent=active.length===3?'최종 3팀, 탈출과 C의 갈림길':'루미아 섬에 오신 것을 환영합니다';
+          $('#phaseCount').innerHTML=active.length===3?`현재 생존 <b>3팀</b><br>C 난입 / 한 팀 탈출 <b>각 50%</b>`:`현재 생존 <b>${active.length}팀</b><br>일반 교전마다 C 난입 <b>8%</b>`;
           $('#battleAnnouncement').textContent='각 경기의 진행 버튼을 누르면 결과가 공개되고 다음 경기가 이어집니다.';
           $('#phaseStatus').textContent=`ROUND ${String(roundNo).padStart(2,'0')} · ${roundEvents.length}개 교전 준비`;
           const scale=active.length===3?'final':active.length>=20?'wide':active.length>=8?'mid':active.length>=3?'close':'final';
@@ -897,27 +1060,28 @@
           for(let index=0;index<roundEvents.length;index++){
             const event=roundEvents[index],cell=$(`[data-match-index="${index}"]`,$('#bracketBoard'));
             const {teamA,teamB,outcome}=event;
-            const stepName=event.type==='triple'?'3팀 최종 결과 공개':`${index+1}경기 결과 공개`;
+            const isTriple=event.type==='triple',isBye=event.type==='bye';
+            const stepName=isTriple?'3팀 최종 결과 공개':isBye?'생존 팀 진출 공개':`${index+1}경기 결과 공개`;
             const stepStatus=`ROUND ${String(roundNo).padStart(2,'0')} · ${index+1}/${roundEvents.length}경기 대기`;
             if(!roundSkipRequested){
-              $('#phaseStatus').textContent=`ROUND ${String(roundNo).padStart(2,'0')} · ${event.type==='triple'?'최종 3팀 중앙 집중':`${index+1}경기 중앙 교전`}`;
-              $('#battleAnnouncement').innerHTML=event.type==='triple'?'세 팀의 마지막 운명이 결정됩니다.':`<b>TEAM ${String(teamA.id).padStart(2,'0')}</b> VS <b>TEAM ${String(teamB.id).padStart(2,'0')}</b> · 교전 준비`;
+              $('#phaseStatus').textContent=`ROUND ${String(roundNo).padStart(2,'0')} · ${isTriple?'최종 3팀 중앙 집중':isBye?'안전 구역 진출 확인':`${index+1}경기 중앙 교전`}`;
+              $('#battleAnnouncement').innerHTML=isTriple?'세 팀의 마지막 운명이 결정됩니다.':isBye?`<b>TEAM ${String(event.safeTeam.id).padStart(2,'0')}</b>이 안전 구역에 도착했습니다.`:`<b>TEAM ${String(teamA.id).padStart(2,'0')}</b> VS <b>TEAM ${String(teamB.id).padStart(2,'0')}</b> · 교전 준비`;
               await focusMatchCell(cell);
               if(!roundSkipRequested){
-                $('#battleAnnouncement').innerHTML=event.type==='triple'?'진행 버튼을 누르면 세 팀의 최종 결과를 공개합니다.':`진행 버튼을 누르면 <b>TEAM ${String(teamA.id).padStart(2,'0')}</b>과 <b>TEAM ${String(teamB.id).padStart(2,'0')}</b>의 결과를 공개합니다.`;
+                $('#battleAnnouncement').innerHTML=isTriple?'진행 버튼을 누르면 세 팀의 최종 결과를 공개합니다.':isBye?'진행 버튼을 누르면 안전 구역 진출을 확정합니다.':`진행 버튼을 누르면 <b>TEAM ${String(teamA.id).padStart(2,'0')}</b>과 <b>TEAM ${String(teamB.id).padStart(2,'0')}</b>의 결과를 공개합니다.`;
                 await waitForAdvance(stepName,stepStatus);
               }
             }
-            $('#phaseStatus').textContent=`ROUND ${String(roundNo).padStart(2,'0')} · ${index+1}경기 결과 공개`;
-            $('#battleAnnouncement').innerHTML=event.type==='triple'?'최종 3팀의 결과를 공개합니다…':`<b>TEAM ${String(teamA.id).padStart(2,'0')}</b> VS <b>TEAM ${String(teamB.id).padStart(2,'0')}</b> · 결과 판정 중…`;
-            if(event.type==='triple'&&outcome.type==='escape'){
+            $('#phaseStatus').textContent=`ROUND ${String(roundNo).padStart(2,'0')} · ${index+1}/${roundEvents.length} 결과 공개`;
+            $('#battleAnnouncement').innerHTML=isTriple?'최종 3팀의 결과를 공개합니다…':isBye?`<b>TEAM ${String(event.safeTeam.id).padStart(2,'0')}</b> 안전 구역 진출 확인 중…`:`<b>TEAM ${String(teamA.id).padStart(2,'0')}</b> VS <b>TEAM ${String(teamB.id).padStart(2,'0')}</b> · 결과 판정 중…`;
+            if(isTriple&&outcome.type==='escape'){
               const escapeNode=$(`[data-team-id="${event.escapeTeam.id}"]`,cell);
               if(escapeNode)escapeNode.classList.add('escaped');
               $('.board-result',cell).textContent=`TEAM ${String(event.escapeTeam.id).padStart(2,'0')} 탈출 · 남은 두 팀 교전 중`;
               $('#battleAnnouncement').innerHTML=`<b>TEAM ${String(event.escapeTeam.id).padStart(2,'0')}</b> 탈출 성공 · 남은 두 팀이 정상적으로 겨룹니다.`;
               await waitDuringRound(420,120);
             }
-            if(outcome.type==='c'){
+            if(outcome?.type==='c'){
               const apparentWinner=Math.random()<.5?teamA:teamB,apparentLoser=apparentWinner===teamA?teamB:teamA;
               cell.classList.add('resolved','c-tease');
               $$('[data-team-id]',cell).forEach(team=>{
@@ -936,10 +1100,14 @@
             }
             if(cell)resolveBoardMatch(cell,event);
             $('#battleProgress').style.width=`${Math.round((index+1)/roundEvents.length*100)}%`;
-            if(outcome.type==='c'){
-              $('#battleAnnouncement').innerHTML=`<b>Ｃ 난입!</b> TEAM ${String(event.cTeam.id).padStart(2,'0')}이 TEAM ${String(teamA.id).padStart(2,'0')} · ${String(teamB.id).padStart(2,'0')}을 동시에 사출합니다.`;
+            if(isBye){
+              $('#battleAnnouncement').innerHTML=`<b>TEAM ${String(event.safeTeam.id).padStart(2,'0')}</b> 안전 구역을 통해 다음 라운드로 이동합니다.`;
+              appendLog(`<span class="log-round">R${roundNo}</span><span class="log-copy"><b>TEAM ${String(event.safeTeam.id).padStart(2,'0')}</b> 상대 없이 진출</span><span class="log-result">SAFE</span>`,'escape');
+              await waitDuringRound(MATCH_REVEAL_MS,140);
+            }else if(outcome.type==='c'){
+              $('#battleAnnouncement').innerHTML=`<b>Ｃ 난입!</b> TEAM ${String(event.cTeam.id).padStart(2,'0')}이 TEAM ${String(teamA.id).padStart(2,'0')} · ${String(teamB.id).padStart(2,'0')}을 동시에 사출${event.safeTeam?` · TEAM ${String(event.safeTeam.id).padStart(2,'0')} 탈출`:''}.`;
               $('#phaseStatus').textContent=`ROUND ${String(roundNo).padStart(2,'0')} · C 발동`;
-              appendLog(`<span class="log-round">R${roundNo}</span><span class="log-copy"><b>TEAM ${String(event.cTeam.id).padStart(2,'0')} C 발동</b> · TEAM ${String(teamA.id).padStart(2,'0')} + ${String(teamB.id).padStart(2,'0')} 동시 사출</span><span class="log-result">C ATTACK</span>`,'c-event');
+              appendLog(`<span class="log-round">R${roundNo}</span><span class="log-copy"><b>TEAM ${String(event.cTeam.id).padStart(2,'0')} C 발동</b> · TEAM ${String(teamA.id).padStart(2,'0')} + ${String(teamB.id).padStart(2,'0')} 동시 사출${event.safeTeam?` · TEAM ${String(event.safeTeam.id).padStart(2,'0')} 탈출`:''}</span><span class="log-result">C ATTACK</span>`,'c-event');
               await waitDuringRound(C_REVEAL_MS,380);
             }else if(outcome.type==='escape'){
               $('#battleAnnouncement').innerHTML=`<b>TEAM ${String(outcome.escapeTeam.id).padStart(2,'0')}</b> 탈출 · <b>TEAM ${String(outcome.winner.id).padStart(2,'0')}</b> 생존 · TEAM ${String(outcome.loser.id).padStart(2,'0')} 사출`;
@@ -1046,9 +1214,10 @@
       $('#heroFocusSelect').addEventListener('change',event=>{
         const value=event.target.value;
         state.focusId=value===''?null:Number(value);
-        saveState();renderHeroPortrait();renderRoster();
+        saveState();renderFocusPicker();renderHeroPortrait();renderRoster();
         toast(state.focusId===null?'집중 캐릭터 설정을 해제했어요.':`${subject(state.focusId).name}을(를) 집중 표시합니다.`);
       });
+      $('#dakStreakButton').addEventListener('click',lookupDakStreak);
       $('#includeAll').addEventListener('click',()=>{state.excluded.clear();saveState();renderRoster();updateCounts();toast('전체 실험체를 다시 참가시켰어요.');});
       $('#excludeAll').addEventListener('click',()=>{if(!window.confirm('모든 실험체를 뽑기에서 제외할까요?'))return;state.excluded=new Set(roster.map(character=>character.id));saveState();renderRoster();updateCounts();toast('전체 실험체를 제외했어요.');});
       $('#startRoulette').addEventListener('click',startSimulation);
